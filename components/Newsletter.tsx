@@ -4,17 +4,17 @@ import { useState } from 'react';
 
 export default function Newsletter() {
   const [email, setEmail] = useState('');
-  const [ok, setOk] = useState<boolean | null>(null);
+  const [ok, setOk] = useState<null | boolean>(null);
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!email) return;
     setLoading(true);
-    setOk(null);
     try {
       const r = await fetch('/api/newsletter', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
       setOk(r.ok);
@@ -23,27 +23,49 @@ export default function Newsletter() {
       setOk(false);
     } finally {
       setLoading(false);
+      setTimeout(() => setOk(null), 3500);
     }
   }
 
   return (
-    <div className="max-w-xl mx-auto">
-      <form onSubmit={onSubmit} className="flex gap-2">
-        <input
-          type="email"
-          required
-          placeholder="Seu melhor e-mail"
-          className="flex-1"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          aria-label="E-mail para receber novidades"
-        />
-        <button className="btn btn-primary" disabled={loading}>
-          {loading ? 'Enviando...' : 'Assinar'}
-        </button>
-      </form>
-      {ok === true && <p className="mt-2 text-sm text-green-600">Pronto! Você vai receber nossas novidades.</p>}
-      {ok === false && <p className="mt-2 text-sm text-red-600">Não foi possível assinar agora. Tente novamente.</p>}
-    </div>
+    <section aria-label="Assine a newsletter" className="rounded-2xl border bg-white">
+      <div className="p-8 md:p-10 grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h3 className="text-2xl md:text-3xl font-bold">Receba novidades e oportunidades</h3>
+          <p className="mt-3 text-sm md:text-base text-gray-600 max-w-[48ch]">
+            Dicas rápidas de produtos quentes e melhorias do SeuReview,
+            direto no seu e-mail. Sem spam, prometido.
+          </p>
+        </div>
+
+        <form onSubmit={onSubmit} className="flex w-full gap-3">
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            placeholder="seuemail@exemplo.com"
+            aria-label="Seu e-mail"
+            className="flex-1 h-11 md:h-12"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <button className="btn btn-primary h-11 md:h-12 px-5" disabled={!email || loading}>
+            {loading ? 'Enviando…' : 'Quero receber'}
+          </button>
+        </form>
+
+        {ok === true && (
+          <p className="md:col-span-2 text-sm text-green-600">
+            Pronto! Você está na lista. 🎉
+          </p>
+        )}
+        {ok === false && (
+          <p className="md:col-span-2 text-sm text-red-600">
+            Ops, não conseguimos cadastrar agora. Tente novamente.
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
