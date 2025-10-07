@@ -2,47 +2,26 @@
 
 import * as React from "react";
 
-/* === Ícones inline (sem dependências) === */
+/* Ícones inline */
 function IconStar({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <path
-        d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"
-        fill="currentColor"
-      />
+      <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z" fill="currentColor" />
     </svg>
   );
 }
 function IconPercent({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <path
-        d="M7 7.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Zm10 4a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM6 19l12-14"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M7 7.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Zm10 4a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM6 19l12-14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
 function IconTrendingUp({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden>
-      <path
-        d="M3 17l6-6 4 4 7-7"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <path
-        d="M14 8h7v7"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
+      <path d="M3 17l6-6 4 4 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M14 8h7v7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -55,7 +34,7 @@ function IconSearch({ className = "" }: { className?: string }) {
   );
 }
 
-/* === Tipos e helpers === */
+/* Tipos e helpers */
 type MiniItem = {
   id: string;
   title: string;
@@ -66,7 +45,6 @@ type MiniItem = {
   commissionPercent?: number;
   salesCount?: number;
 };
-
 function formatPrice(n?: number) {
   const v = Number(n ?? 0);
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
@@ -76,7 +54,7 @@ function formatPercent(n?: number) {
   return `${Math.round(v)}%`;
 }
 
-/* === Card compacto === */
+/* Card compacto */
 function MiniCard({ item }: { item: MiniItem }) {
   const hasPercent = typeof item.commissionPercent === "number";
   const hasSales = typeof item.salesCount === "number";
@@ -85,17 +63,11 @@ function MiniCard({ item }: { item: MiniItem }) {
     <article className="rounded-xl border border-[#FFD9CF] bg-white/85 backdrop-blur p-3 shadow-sm hover:shadow transition">
       <a href={item.url} target="_blank" rel="noopener noreferrer" className="block">
         <div className="aspect-[4/3] rounded-lg overflow-hidden border border-[#FFD9CF] bg-[#FFF9F7]">
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
+          <img src={item.image} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
         </div>
         <div className="mt-3 space-y-2">
           <h3 className="text-[13px] font-semibold text-[#111827] line-clamp-2">{item.title}</h3>
 
-          {/* rating + preço */}
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1 text-[#6B7280] text-xs">
               <IconStar className="w-4 h-4 text-amber-400" />
@@ -104,7 +76,6 @@ function MiniCard({ item }: { item: MiniItem }) {
             <div className="text-sm font-semibold">{formatPrice(item.price)}</div>
           </div>
 
-          {/* chips à direita */}
           <div className="flex items-center justify-end gap-2">
             {hasPercent && (
               <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-green-50 text-green-700 border border-green-200">
@@ -125,7 +96,7 @@ function MiniCard({ item }: { item: MiniItem }) {
   );
 }
 
-/* === Normalizador === */
+/* Normalizador */
 function normalizeItems(raw: any[]): MiniItem[] {
   return raw.slice(0, 2).map((it: any, idx: number) => {
     const id =
@@ -163,12 +134,8 @@ function normalizeItems(raw: any[]): MiniItem[] {
   });
 }
 
-/* === Componente principal === */
-export default function HeroPreview({
-  initialItems,
-}: {
-  initialItems?: MiniItem[];
-}) {
+/* Componente principal */
+export default function HeroPreview({ initialItems }: { initialItems?: MiniItem[] }) {
   const [query, setQuery] = React.useState("");
   const [items, setItems] = React.useState<MiniItem[]>(
     initialItems && initialItems.length >= 2
@@ -209,20 +176,25 @@ export default function HeroPreview({
       const r = await fetch("/api/search/shopee", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: q,
-          filters: { limit: 12 },
-          sort: "relevance",
-          country: "BR",
-        }),
+        body: JSON.stringify({ query: q, filters: { limit: 12 }, sort: "relevance", country: "BR" }),
+        cache: "no-store",
       });
-      if (!r.ok) throw new Error(await r.text());
+
+      if (!r.ok) {
+        if (r.status === 404) throw new Error("API de busca não encontrada neste projeto.");
+        throw new Error(`Erro ${r.status} ao buscar.`);
+      }
+
+      const ct = r.headers.get("content-type") || "";
+      if (!ct.includes("application/json")) throw new Error("Resposta inesperada da API.");
+
       const data = await r.json();
       const list = Array.isArray(data?.items) ? data.items : [];
       const next = normalizeItems(list);
       if (next.length) setItems(next);
       else setErr("Não encontrei produtos para este termo.");
     } catch (e: any) {
+      // Mensagem amigável, sem despejar HTML
       setErr(e?.message || "Falha ao buscar.");
     } finally {
       setLoading(false);
