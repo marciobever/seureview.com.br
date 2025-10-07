@@ -22,9 +22,9 @@ COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
 
-# healthcheck
+# healthcheck (mais tolerante)
 RUN apk add --no-cache curl
-HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=6 \
   CMD curl -fsS http://localhost:3000/ || exit 1
 
 EXPOSE 3000
