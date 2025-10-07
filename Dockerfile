@@ -15,7 +15,7 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
 # 🔨 Build Next.js em modo standalone (exige next.config.js com output: 'standalone')
-RUN npm run build
+RUN npm install
 
 # ---- runtime ----
 FROM node:20-alpine AS runtime
