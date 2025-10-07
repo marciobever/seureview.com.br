@@ -19,7 +19,7 @@ const PRELOAD = [
     title: 'Liquidificador Premium 900W — 12 velocidades',
     price: 179.9,
     rating: 4.6,
-    image: '/liquidificador.jpg', // <-- usa a imagem do /public
+    image: '/landing/liquidificador.jpg', // <-- usa a imagem do /public
     url: '#',
     commissionPercent: 9,
     salesCount: 1200, // “~ 1,2 mil vendas”
