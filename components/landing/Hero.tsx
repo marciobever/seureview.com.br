@@ -3,6 +3,33 @@
 import Link from "next/link";
 import HeroPreview from "./HeroPreview";
 
+// se quiser já abrir com 2 produtos REAIS, preencha aqui os dados básicos.
+// (Se você me mandar 2 links da Shopee + título/imagem/preço, te devolvo esse bloco pronto.)
+const PRELOAD: Parameters<typeof HeroPreview>[0]["initialItems"] = undefined;
+// Exemplo pronto (fake bonito):
+// const PRELOAD = [
+//   {
+//     id: "pre-1",
+//     title: "Tênis Performance X — leve, macio e com ótimo amortecimento",
+//     price: 199.9,
+//     rating: 4.8,
+//     image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop",
+//     url: "https://shopee.com.br/product/000/111",
+//     commissionPercent: 12,
+//     salesCount: 1543,
+//   },
+//   {
+//     id: "pre-2",
+//     title: "Fone Bluetooth Pro — cancelamento ativo e bateria 30h",
+//     price: 129.9,
+//     rating: 4.9,
+//     image: "https://images.unsplash.com/photo-1518443883431-b4f51f1b3a58?q=80&w=1200&auto=format&fit=crop",
+//     url: "https://shopee.com.br/product/000/222",
+//     commissionPercent: 18,
+//     salesCount: 2410,
+//   },
+// ];
+
 const chips = ["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"];
 
 export default function Hero() {
@@ -18,7 +45,7 @@ export default function Hero() {
         }}
       />
 
-      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-6 py-14 md:py-20">
         <div className="grid md:grid-cols-2 gap-10 items-center">
           {/* Texto */}
           <div>
@@ -32,9 +59,9 @@ export default function Hero() {
               e publique em minutos.
             </h1>
             <p className="mt-4 text-lg text-gray-600 max-w-[58ch]">
-              SeuReview conecta você às melhores ofertas da <strong>Shopee</strong>, <strong>Amazon</strong>,
-              <strong> Mercado Livre</strong>, <strong>AliExpress</strong> e <strong>Temu</strong> — com
-              legendas inteligentes e links rastreáveis.
+              SeuReview conecta você às melhores ofertas da <strong>Shopee</strong>,{" "}
+              <strong>Amazon</strong>,<strong> Mercado Livre</strong>, <strong>AliExpress</strong> e{" "}
+              <strong>Temu</strong> — com legendas inteligentes e links rastreáveis.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
@@ -65,10 +92,10 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Cartão do preview (tudo fica dentro) */}
-          <div className="relative">
-            <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm w-full max-w-[580px]">
-              <HeroPreview />
+          {/* Preview (tudo dentro do quadrado) */}
+          <div className="relative flex justify-center md:justify-end">
+            <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
+              <HeroPreview initialItems={PRELOAD} />
             </div>
             <div
               className="pointer-events-none absolute -z-10 -right-10 -top-10 h-48 w-48 rounded-full blur-3xl"
