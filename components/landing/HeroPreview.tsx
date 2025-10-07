@@ -1,204 +1,142 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
 
-/* ===== ÍCONES (inline, sem libs) ===== */
-const StarIcon = (p: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="currentColor" {...p}>
-    <path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.401 8.168L12 18.896 4.665 23.165l1.401-8.168L.132 9.21l8.2-1.192L12 .587z" />
-  </svg>
-);
-const PercentIcon = (p: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...p}>
-    <circle cx="7" cy="7" r="2" strokeWidth="2" />
-    <circle cx="17" cy="17" r="2" strokeWidth="2" />
-    <path d="M7 17L17 7" strokeWidth="2" />
-  </svg>
-);
-const TrendingUpIcon = (p: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...p}>
-    <path d="M3 17l6-6 4 4 7-7" strokeWidth="2" />
-    <path d="M14 8h7v7" strokeWidth="2" />
-  </svg>
-);
-const SearchIcon = (p: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...p}>
-    <circle cx="11" cy="11" r="7" strokeWidth="2" />
-    <path d="M21 21l-4.3-4.3" strokeWidth="2" />
-  </svg>
-);
-const SlidersIcon = (p: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...p}>
-    <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3" strokeWidth="2" />
-    <circle cx="4" cy="14" r="2" strokeWidth="2" />
-    <circle cx="12" cy="11" r="2" strokeWidth="2" />
-    <circle cx="20" cy="16" r="2" strokeWidth="2" />
-  </svg>
-);
-
-/* ===== Helpers ===== */
-function Chip({
-  children,
-  tone = "default",
-}: { children: React.ReactNode; tone?: "default" | "success" | "muted" }) {
-  const tones = {
-    default: "border-[#FFD9CF] bg-white/85 text-[#111827]",
-    success: "border-emerald-200 bg-emerald-50/90 text-emerald-700",
-    muted: "border-gray-200 bg-gray-50/90 text-gray-600",
-  } as const;
-  return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] ${tones[tone]}`}>
-      {children}
-    </span>
-  );
-}
-
-/* ===== Card de mini-produto ===== */
-function MiniCard({
-  title,
-  price,
-  rating,
-  commissionPct,
-  sales,
-  img,
-  delay = 0,
-}: {
+type MiniItem = {
+  id: string;
   title: string;
-  price: string;
-  rating: string;
-  commissionPct: string;
-  sales: string;
-  img: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay }}
-      className="rounded-xl border border-[#FFD9CF] bg-white/90 backdrop-blur p-2 w-full overflow-hidden"
-    >
-      <div className="aspect-[4/3] rounded-lg overflow-hidden border border-[#EFE0DC] bg-gray-50">
-        <img
-          src={img}
-          alt=""
-          className="h-full w-full object-cover"
-          loading="lazy"
-        />
-      </div>
+  price: number;
+  rating: number;
+  image: string;
+  commissionPercent?: number;
+  salesCount?: number;
+};
 
-      <div className="pt-2 space-y-1">
-        <p className="text-[11px] font-medium leading-snug line-clamp-2 text-[#111827]">{title}</p>
-
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-[11px] text-gray-600">
-            <StarIcon className="w-3.5 h-3.5 text-amber-300" />
-            {rating}
-          </div>
-          <span className="text-[11px] font-semibold">{price}</span>
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Chip tone="success">
-            <PercentIcon className="w-3 h-3" />
-            {commissionPct}
-          </Chip>
-          <Chip tone="muted">
-            <TrendingUpIcon className="w-3 h-3" />
-            Vendas {sales}
-          </Chip>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ===== Imagens demo (pode trocar pelas suas) ===== */
-const demoImages = [
-  "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1585386959984-a41552231658?q=80&w=800&auto=format&fit=crop",
+const SAMPLE: MiniItem[] = [
+  {
+    id: "a",
+    title: "Funko Pop – Produto Oficial Funko Pronta Entrega",
+    price: 59.99,
+    rating: 5,
+    image: "https://cf.shopee.com.br/file/br-11134207-7r98o-mabpept6ucmxc7",
+    commissionPercent: 3,
+    salesCount: 3,
+  },
+  {
+    id: "b",
+    title: "Funko Pop UV Protector – Acrílico Oficial Funko",
+    price: 95.92,
+    rating: 5,
+    image: "https://cf.shopee.com.br/file/br-11134207-7r98o-m83mo8l52prl68",
+    commissionPercent: 7,
+    salesCount: 2,
+  },
 ];
 
+function formatPrice(n: number) {
+  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
 export default function HeroPreview() {
+  const [tab, setTab] = React.useState<"produtos" | "historico">("produtos");
+  const [query, setQuery] = React.useState("");
+  const [sort, setSort] = React.useState("relevance");
+
+  // lista “fake” filtrada (apenas para visual do hero)
+  const items = React.useMemo(() => {
+    let list = SAMPLE.filter((i) =>
+      i.title.toLowerCase().includes(query.trim().toLowerCase())
+    );
+    if (sort === "price_desc") list = [...list].sort((a, b) => b.price - a.price);
+    if (sort === "price_asc") list = [...list].sort((a, b) => a.price - b.price);
+    if (sort === "rating_desc") list = [...list].sort((a, b) => b.rating - a.rating);
+    return list;
+  }, [query, sort]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5 }}
-      className="relative"
-    >
-      {/* moldura */}
-      <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur p-3 md:p-4 w-full max-w-[560px] overflow-hidden shadow-[0_10px_30px_rgba(238,77,45,0.08)]">
-        {/* tabs */}
-        <div className="grid grid-cols-2 text-[12px] rounded-xl overflow-hidden border border-[#FFD9CF]">
-          <button className="px-3 py-1.5 bg-[#EE4D2D] text-white font-medium">Produtos</button>
-          <button className="px-3 py-1.5 bg-white text-[#111827]">Histórico</button>
-        </div>
-
-        {/* filtros */}
-        <div className="mt-2 flex items-center gap-2">
-          <div className="relative flex-1">
-            <SearchIcon className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              placeholder="Buscar por título..."
-              className="pl-7 pr-3 py-1.5 w-full rounded-lg border border-[#FFD9CF] bg-white/85 text-[12px] focus:outline-none"
-              readOnly
-            />
-          </div>
-          <div className="relative">
-            <select
-              className="appearance-none pl-3 pr-8 py-1.5 text-[12px] rounded-lg border border-[#FFD9CF] bg-white/85"
-              defaultValue="relevance"
-              disabled
-            >
-              <option value="relevance">Relevância</option>
-              <option>Comissão (R$) — maior</option>
-              <option>Comissão (%) — maior</option>
-              <option>Vendas — maior</option>
-            </select>
-            <SlidersIcon className="w-4 h-4 absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-          </div>
-        </div>
-
-        {/* conteúdo (sem rolagem, dentro do esquadro) */}
-        <div className="mt-3 rounded-xl border border-[#FFD9CF] bg-white/60 p-2">
-          <div className="grid grid-cols-2 gap-2">
-            <MiniCard
-              title="Funko Pop – Produto Oficial Funko Pronta Entrega"
-              price="R$ 59,99"
-              rating="5.0"
-              commissionPct="3%"
-              sales="3"
-              img={demoImages[0]}
-              delay={0.04}
-            />
-            <MiniCard
-              title="Funko Pop UV Protector – Acrílico Oficial Funko"
-              price="R$ 95,92"
-              rating="5.0"
-              commissionPct="7%"
-              sales="2"
-              img={demoImages[1]}
-              delay={0.10}
-            />
-          </div>
-
-          <div className="mt-3 grid grid-cols-3 gap-2 text-[11px]">
-            <Chip>Legenda (IA)</Chip>
-            <Chip>UTM + SubIDs</Chip>
-            <Chip>Agendamento</Chip>
-          </div>
-        </div>
+    <div className="p-3 sm:p-4">
+      {/* Tabs */}
+      <div className="grid grid-cols-2 text-sm rounded-xl border border-[#FFD9CF] bg-white/70 overflow-hidden">
+        <button
+          className={`py-2 rounded-lg transition ${
+            tab === "produtos" ? "bg-[#EE4D2D] text-white" : "text-[#111827]"
+          }`}
+          onClick={() => setTab("produtos")}
+        >
+          Produtos
+        </button>
+        <button
+          className={`py-2 rounded-lg transition ${
+            tab === "historico" ? "bg-[#EE4D2D] text-white" : "text-[#111827]"
+          }`}
+          onClick={() => setTab("historico")}
+        >
+          Histórico
+        </button>
       </div>
 
-      {/* glow de fundo */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -z-10 -right-8 -top-8 h-40 w-40 rounded-full blur-2xl"
-        style={{ background: "rgba(238,77,45,0.20)" }}
-      />
-    </motion.div>
+      {/* Barra de busca + sort */}
+      <div className="mt-3 flex gap-2">
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Buscar por título..."
+          className="flex-1 h-9 rounded-lg border border-[#FFD9CF] bg-white/70 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#EE4D2D]/30"
+        />
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="h-9 rounded-lg border border-[#FFD9CF] bg-white/70 px-2 text-sm"
+        >
+          <option value="relevance">Relevância</option>
+          <option value="rating_desc">Avaliação — maior</option>
+          <option value="price_desc">Preço — maior</option>
+          <option value="price_asc">Preço — menor</option>
+        </select>
+        <button className="h-9 px-3 rounded-lg bg-[#EE4D2D] text-white text-sm">Buscar</button>
+      </div>
+
+      {/* Grid compacta (fixa, sem scroll) */}
+      <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {items.map((p) => (
+          <div
+            key={p.id}
+            className="rounded-xl border border-[#FFD9CF] bg-white/80 overflow-hidden"
+          >
+            <div className="aspect-[4/3] bg-[#FFF9F7] border-b border-[#FFD9CF]">
+              <img
+                src={p.image}
+                alt={p.title}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="p-3 space-y-2">
+              <div className="text-[13px] font-semibold leading-snug line-clamp-2">
+                {p.title}
+              </div>
+
+              <div className="flex items-center justify-between text-sm">
+                <div className="inline-flex items-center gap-1 text-[#6B7280]">
+                  <span className="inline-block w-3 h-3 rounded-full bg-amber-400" />
+                  {p.rating.toFixed(1)}
+                </div>
+                <div className="font-semibold">{formatPrice(p.price)}</div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-[#E6F6EC] text-[#067647] border border-[#A9E0BE]">
+                  % {p.commissionPercent?.toFixed(0)}
+                </span>
+                <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full bg-[#F3F4F6] text-[#374151] border border-[#E5E7EB]">
+                  Vendas {p.salesCount ?? 0}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
