@@ -1,141 +1,180 @@
-// components/landing/HeroPreview.tsx
 "use client";
 
 import * as React from "react";
-import { Star, Percent, TrendingUp, Search as SearchIcon, SlidersHorizontal } from "lucide-react";
 
-type MiniItem = {
-  id: string;
-  title: string;
-  price: number;
-  rating: number;
-  image?: string;
-  commissionPercent?: number;
-  salesCount?: number;
-};
+/* ---------- Inline icons (sem lucide-react) ---------- */
+function StarIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden {...props}>
+      <path
+        d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21 12 17.27z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+function PercentIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden {...props}>
+      <path d="M18 6 6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <circle cx="7.5" cy="6.5" r="2.5" fill="currentColor" />
+      <circle cx="16.5" cy="17.5" r="2.5" fill="currentColor" />
+    </svg>
+  );
+}
+function TrendUpIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden {...props}>
+      <path
+        d="M3 17l6-6 4 4 7-7"
+        stroke="currentColor"
+        strokeWidth="2"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M14 8h7v7" stroke="currentColor" strokeWidth="2" fill="none" />
+    </svg>
+  );
+}
+function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden {...props}>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" fill="none" />
+      <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="2" />
+    </svg>
+  );
+}
+function ChevronDown(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden {...props}>
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" fill="none" />
+    </svg>
+  );
+}
 
-const MOCK: MiniItem[] = [
-  { id: "1", title: "Airfryer 3,2L Inox", price: 329.9, rating: 4.8, commissionPercent: 7,  salesCount: 154 },
-  { id: "2", title: "Fone Bluetooth TWS", price: 89.9,  rating: 4.6, commissionPercent: 10, salesCount: 721 },
-  { id: "3", title: "Cafeteira Espresso 20bar", price: 489.0, rating: 4.9, commissionPercent: 6,  salesCount: 83  },
-];
-
-function brl(n: number) {
+/* ---------- helpers ---------- */
+function money(n: number) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-export default function HeroPreview() {
-  const [active, setActive] = React.useState(0);
-
-  // troquinha automática só pra dar “vida” no hero
-  React.useEffect(() => {
-    const i = setInterval(() => setActive((a) => (a + 1) % MOCK.length), 2400);
-    return () => clearInterval(i);
-  }, []);
-
+/* ---------- Card do mock ---------- */
+function PreviewProductCard({
+  title,
+  price,
+  rating,
+  pct,
+  vendas,
+  img,
+}: {
+  title: string;
+  price: number;
+  rating: number;
+  pct?: number;
+  vendas?: number;
+  img: string;
+}) {
   return (
-    <div
-      className="
-        relative rounded-[24px] border border-[#FFD9CF] bg-white/70 backdrop-blur-sm
-        shadow-[0_6px_30px_rgba(238,77,45,0.08)] p-4 sm:p-5
-      "
-    >
-      {/* Topo – busca fake */}
-      <div className="flex items-center gap-2">
+    <div className="rounded-2xl border border-[#FFD9CF] overflow-hidden bg-white shadow-sm">
+      <div className="aspect-[4/3] bg-[#FFF9F7]">
+        <img src={img} alt="" className="w-full h-full object-cover" />
+      </div>
+      <div className="p-3 space-y-2">
+        <h3 className="text-sm font-semibold text-[#111827] line-clamp-2">{title}</h3>
+
+        <div className="flex items-center justify-between">
+          <div className="inline-flex items-center gap-1 text-[#6B7280] text-sm">
+            <StarIcon className="w-4 h-4 text-amber-400" />
+            <span>{rating.toFixed(1)}</span>
+          </div>
+          <div className="text-sm font-semibold">{money(price)}</div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 pt-1">
+          {typeof pct === "number" && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-green-200 bg-green-50 text-green-700 px-2 py-0.5 text-[11px]">
+              <PercentIcon className="w-3 h-3" />
+              {pct.toFixed(0)}%
+            </span>
+          )}
+          {typeof vendas === "number" && (
+            <span className="inline-flex items-center gap-1 rounded-full border border-gray-200 bg-gray-100 text-gray-600 px-2 py-0.5 text-[11px]">
+              <TrendUpIcon className="w-3 h-3" />
+              Vendas {vendas}
+            </span>
+          )}
+        </div>
+
+        <div className="flex gap-2 pt-1">
+          <button className="flex-1 px-3 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white">
+            Selecionar
+          </button>
+          <button className="flex-1 px-3 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+            Ver na Shopee
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Componente principal (preview do painel do Hero) ---------- */
+export default function HeroPreview() {
+  return (
+    <div className="rounded-2xl border border-[#FFD9CF] bg-white shadow-sm overflow-hidden">
+      {/* tabs */}
+      <div className="flex gap-1 p-2">
+        <button className="flex-1 px-4 py-2 rounded-xl bg-[#EE4D2D] text-white text-sm font-medium">
+          Produtos
+        </button>
+        <button className="flex-1 px-4 py-2 rounded-xl border border-[#FFD9CF] bg-white text-sm">
+          Histórico
+        </button>
+      </div>
+
+      {/* filtro/busca */}
+      <div className="border-t border-[#FFD9CF]" />
+      <div className="p-3 flex items-center gap-3">
         <div className="relative flex-1">
-          <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#9CA3AF]" />
+          <SearchIcon className="w-4 h-4 text-[#6B7280] absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             disabled
             placeholder="Buscar por título…"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#FFD9CF] bg-white/70 text-sm
-                       placeholder-[#9CA3AF] cursor-default"
+            className="w-full pl-9 pr-3 py-2 rounded-lg border border-[#FFD9CF] bg-white text-sm"
           />
         </div>
-        <button
-          disabled
-          className="px-3 py-2 rounded-lg text-sm bg-[#EE4D2D]/90 text-white shadow-sm cursor-default"
-        >
+        <div className="relative">
+          <button
+            disabled
+            className="pl-3 pr-8 py-2 rounded-lg border border-[#FFD9CF] bg-white text-sm text-[#111827]"
+          >
+            Relevância
+          </button>
+          <ChevronDown className="w-4 h-4 text-[#6B7280] absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
+        <button disabled className="px-4 py-2 rounded-lg bg-[#EE4D2D] text-white text-sm font-medium">
           Buscar
         </button>
       </div>
 
-      {/* Sort fake */}
-      <div className="mt-3 flex items-center gap-2 text-xs text-[#6B7280]">
-        <div className="inline-flex items-center gap-1 px-2 py-1 rounded-md border border-[#FFD9CF] bg-white/70">
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          Relevância
-        </div>
-        <span className="opacity-60">•</span>
-        <span>Prévia do painel</span>
-      </div>
-
-      {/* Grid de mini-cards */}
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {MOCK.map((p, idx) => {
-          const isActive = idx === active;
-          return (
-            <div
-              key={p.id}
-              onMouseEnter={() => setActive(idx)}
-              className={[
-                "group rounded-xl overflow-hidden border border-[#FFD9CF] bg-white shadow-sm transition-all",
-                isActive ? "ring-2 ring-[#EE4D2D]/60" : "hover:shadow-md",
-              ].join(" ")}
-            >
-              <div className="aspect-[4/3] bg-[#FFF9F7] flex items-center justify-center">
-                {/* placeholder simpático sem depender de imagens reais */}
-                <div className="text-[11px] uppercase tracking-wide text-[#9CA3AF]">
-                  Imagem do produto
-                </div>
-              </div>
-
-              <div className="p-3 space-y-2">
-                <div className="text-[13px] font-semibold text-[#111827] line-clamp-2">
-                  {p.title}
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="inline-flex items-center gap-1 text-[#6B7280] text-[13px]">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    {p.rating.toFixed(1)}
-                  </div>
-                  <div className="text-[13px] font-semibold">{brl(p.price)}</div>
-                </div>
-
-                {/* chips: comissão % (verde) + Vendas N (cinza) */}
-                <div className="flex items-center justify-end gap-2 pt-1">
-                  {typeof p.commissionPercent === "number" && (
-                    <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full
-                                      bg-green-50 text-green-700 border border-green-200">
-                      <Percent className="w-3 h-3" />
-                      {p.commissionPercent.toFixed(0)}%
-                    </span>
-                  )}
-                  {typeof p.salesCount === "number" && (
-                    <span className="inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full
-                                      bg-gray-100 text-gray-600 border border-gray-200">
-                      <TrendingUp className="w-3 h-3" />
-                      Vendas {p.salesCount.toLocaleString("pt-BR")}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Rodapé – “ferramentas” do composer (só visual) */}
-      <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
-        {["Legenda (IA)", "UTM + SubIDs", "Agendamento"].map((t) => (
-          <button
-            key={t}
-            disabled
-            className="w-full text-sm px-3 py-2 rounded-lg border border-[#E5E7EB] bg-white/70 text-[#374151] cursor-default"
-          >
-            {t}
-          </button>
-        ))}
+      {/* grid de cards */}
+      <div className="p-3 grid grid-cols-2 gap-3">
+        <PreviewProductCard
+          title="Funko Pop - Produto Oficial Funko Pronta Entrega"
+          price={59.99}
+          rating={5}
+          pct={3}
+          vendas={3}
+          img="https://images.unsplash.com/photo-1542000551557-3fd0d1cfc1b8?q=80&w=1200&auto=format&fit=crop"
+        />
+        <PreviewProductCard
+          title="Funko Pop UV Protector – Acrílico Oficial Funko"
+          price={95.92}
+          rating={5}
+          pct={7}
+          vendas={2}
+          img="https://images.unsplash.com/photo-1514846160150-3b1aa3c1c3f0?q=80&w=1200&auto=format&fit=crop"
+        />
       </div>
     </div>
   );
