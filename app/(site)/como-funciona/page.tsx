@@ -1,43 +1,55 @@
-// app/(site)/como-funciona/page.tsx
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
+export const metadata = {
   title: "Como funciona | SeuReview",
-  description: "Veja o passo a passo: conectar integrações, achar produtos, gerar legendas, programar posts e acompanhar resultados.",
+  description:
+    "Veja como o SeuReview encontra produtos virais, gera legendas com IA, cria links com UTM/SubIDs e publica em múltiplas redes.",
   alternates: { canonical: "/como-funciona" },
 };
 
-const steps = [
-  { t: "1. Conecte suas contas", d: "Integre Meta e marketplaces (ex.: Shopee). Permissões mínimas e seguras." },
-  { t: "2. Descubra produtos virais", d: "Filtros por preço, comissão e tendência. Coleções salvas para sua rotina." },
-  { t: "3. Gere a legenda com IA", d: "Tom de voz e CTA ajustáveis. Hashtags e variações rápidas." },
-  { t: "4. UTM + SubIDs", d: "Rastreie campanhas, canais e criativos para entender o que converte." },
-  { t: "5. Programe e publique", d: "Agende nos horários de pico e publique em múltiplos perfis." },
-  { t: "6. Meça e otimize", d: "Painel com CTR, engajamento e receita estimada para decisões rápidas." },
-];
-
 export default function Page() {
+  const passos = [
+    {
+      t: "Descoberta de produtos",
+      d: "Selecionamos ofertas com alta tração em marketplaces (Shopee, Amazon, Mercado Livre, AliExpress, Temu).",
+    },
+    {
+      t: "Geração de conteúdo",
+      d: "IA cria títulos, bullets e legendas com foco em CTR e conversão para Instagram, Facebook e Reels.",
+    },
+    {
+      t: "Links rastreáveis",
+      d: "Criação automática de UTM e SubIDs por canal/campanha para medir performance.",
+    },
+    {
+      t: "Publicação e agendamento",
+      d: "Publique agora ou agende horários de pico em poucos cliques.",
+    },
+    {
+      t: "Métricas",
+      d: "Acompanhe cliques, engajamento e receita estimada em tempo real.",
+    },
+    {
+      t: "Colaboração",
+      d: "Convide equipe e gerencie múltiplas contas com segurança.",
+    },
+  ];
+
   return (
     <main className="section">
       <div className="max-container">
         <h1 className="text-3xl md:text-4xl font-bold">Como funciona</h1>
-        <p className="mt-2 text-gray-600 max-w-2xl">
-          Do zero à publicação em poucos minutos — e com rastreio completo das suas campanhas.
+        <p className="mt-3 text-gray-600 max-w-2xl">
+          Um fluxo direto para transformar produtos em conteúdo que vende.
         </p>
 
-        <div className="mt-10 grid lg:grid-cols-3 gap-6">
-          {steps.map((s, i) => (
-            <div key={i} className="card">
+        <div className="mt-10 grid md:grid-cols-3 gap-6">
+          {passos.map((p) => (
+            <div key={p.t} className="card">
               <div className="card-body">
-                <div className="font-semibold text-lg text-gray-900">{s.t}</div>
-                <p className="mt-2 text-sm text-gray-600">{s.d}</p>
+                <div className="font-semibold text-lg">{p.t}</div>
+                <p className="mt-2 text-sm text-gray-600">{p.d}</p>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-12">
-          <a href="/signup" className="btn btn-primary">Começar agora</a>
         </div>
       </div>
     </main>
