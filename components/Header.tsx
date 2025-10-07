@@ -13,7 +13,6 @@ export default function Header({ initialLoggedIn = false }: Props) {
   const [open, setOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(initialLoggedIn);
 
-  // 🔎 checa sessão no mount, ao focar a aba e após navegações
   useEffect(() => {
     const check = async () => {
       try {
@@ -41,10 +40,7 @@ export default function Header({ initialLoggedIn = false }: Props) {
   ];
 
   async function logout() {
-    try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-    } catch {}
-    // ✅ atualiza UI imediatamente e redireciona
+    try { await fetch('/api/auth/logout', { method: 'POST' }); } catch {}
     setLoggedIn(false);
     window.location.href = '/';
   }
@@ -53,30 +49,24 @@ export default function Header({ initialLoggedIn = false }: Props) {
     <header className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-[#FFD9CF]">
       <div className="mx-auto max-w-7xl px-4 py-3">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2" aria-label="SeuReview - Início">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EE4D2D] text-white font-bold">
-              SR
-            </span>
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EE4D2D] text-white font-bold">SR</span>
             <span className="font-semibold text-gray-900">SeuReview</span>
           </Link>
 
-          {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm">
             {navPublic.map((i) => (
               <Link key={i.href} href={i.href} className="hover:text-gray-700">
                 {i.label}
               </Link>
             ))}
-            {loggedIn &&
-              navPrivate.map((i) => (
-                <Link key={i.href} href={i.href} className="hover:text-gray-700">
-                  {i.label}
-                </Link>
-              ))}
+            {loggedIn && navPrivate.map((i) => (
+              <Link key={i.href} href={i.href} className="hover:text-gray-700">
+                {i.label}
+              </Link>
+            ))}
           </nav>
 
-          {/* Actions (right) */}
           <div className="hidden sm:flex items-center gap-2">
             {loggedIn ? (
               <>
@@ -91,17 +81,16 @@ export default function Header({ initialLoggedIn = false }: Props) {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button
             className="md:hidden inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm hover:bg-gray-50"
             onClick={() => setOpen((v) => !v)}
-            aria-label="Abrir menu"
+            aria-expanded={open}
+            aria-label="Alternar menu"
           >
             {open ? 'Fechar' : 'Menu'}
           </button>
         </div>
 
-        {/* Mobile nav */}
         <div className={cx('md:hidden transition-all overflow-hidden', open ? 'max-h-[60vh] mt-3' : 'max-h-0')}>
           <div className="flex flex-col gap-2 border-t pt-3">
             {[...navPublic, ...(loggedIn ? navPrivate : [])].map((i) => (
