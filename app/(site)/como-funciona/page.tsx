@@ -1,6 +1,6 @@
 // app/como-funciona/page.tsx
-import React from "react";
 import Image from "next/image";
+import * as React from "react";
 
 export const metadata = {
   title: "Como funciona | SeuReview",
@@ -9,7 +9,7 @@ export const metadata = {
   alternates: { canonical: "/como-funciona" },
 };
 
-// ÍCONES INLINE (sem libs)
+// ———— ÍCONES INLINE (sem libs) ————
 function StarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
@@ -43,13 +43,13 @@ function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-// HELPERS
+// ———— HELPERS ————
 type MiniItem = {
   id: string;
   title: string;
   price: number;
   rating: number;
-  image: string;       // ex.: /landing/liquidificador.jpg
+  image: string; // /public/landing/...  ou /liquidificador.jpg
   url: string;
   commissionPercent?: number;
   salesCount?: number;
@@ -69,31 +69,31 @@ function compactSales(n?: number) {
   return `${v}`;
 }
 
-// MOCKS (use imagens em /public/landing)
+// ———— MOCKS ————
 const MOCK_PRODUCTS: MiniItem[] = [
   {
     id: "p1",
-    title: "Tênis esportivo leve — amortecimento e respirável",
-    price: 159.9,
-    rating: 4.7,
-    image: "/landing/tenis.jpg",
-    url: "#",
-    commissionPercent: 11,
-    salesCount: 720,
-  },
-  {
-    id: "p2",
     title: "Liquidificador 1200W Inox — Copo 2L, 12 Velocidades",
     price: 219.9,
     rating: 4.6,
-    image: "/landing/liquidificador.jpg",
+    image: "/liquidificador.jpg",
     url: "#",
     commissionPercent: 12,
-    salesCount: 680,
+    salesCount: 780,
+  },
+  {
+    id: "p2",
+    title: "Liquidificador PowerGlass 800W — Jarra de Vidro 1.5L",
+    price: 189.0,
+    rating: 4.4,
+    image: "/liquidificador.jpg",
+    url: "#",
+    commissionPercent: 10,
+    salesCount: 630,
   },
 ];
 
-// SUB-COMPONENTES VISUAIS
+// ———— SUB-COMPONENTES VISUAIS ————
 function Badge({
   tone = "default",
   className = "",
@@ -115,14 +115,13 @@ function Badge({
 function ProductCard({ product }: { product: MiniItem }) {
   return (
     <div className="overflow-hidden rounded-xl border border-[#FFD9CF] bg-white shadow-sm">
+      {/* imagem com Next/Image (sem onError; SSR-safe) */}
       <div className="relative aspect-[4/3] bg-[#FFF9F7] border-b border-[#FFD9CF]">
-        {/* next/image no Server Component, sem event handlers */}
         <Image
           src={product.image}
           alt={product.title}
           fill
           className="object-cover"
-          sizes="(max-width: 640px) 100vw, 50vw"
           priority
         />
       </div>
@@ -140,7 +139,7 @@ function ProductCard({ product }: { product: MiniItem }) {
           <div className="text-sm font-semibold">{formatPrice(product.price)}</div>
         </div>
 
-        {/* Comissão (esq) e vendas (dir) */}
+        {/* LINHA DE CHIPS: esquerda = comissão (%), direita = vendas */}
         <div className="flex items-center justify-between pt-1">
           <Badge tone="success" className="inline-flex items-center gap-1">
             <PercentIcon className="w-3 h-3" />
@@ -272,11 +271,11 @@ function MockMetrics() {
         </div>
         <div className="rounded-lg border p-4">
           <div className="text-xs text-gray-500">Engajamento</div>
-          <div className="text-2xl font-bold">5,8%</div>
+          <div className="text-2xl font-bold">5,8%</</div>
         </div>
         <div className="rounded-lg border p-4">
           <div className="text-xs text-gray-500">Receita estimada</div>
-          <div className="text-2xl font-bold">R$ 412</div>
+          <div className="text-2xl font-bold">R$ 412</</div>
         </div>
       </div>
     </div>
@@ -285,30 +284,12 @@ function MockMetrics() {
 
 export default function Page() {
   const passos = [
-    {
-      t: "Descoberta de produtos",
-      d: "Selecionamos ofertas com alta tração em marketplaces (Shopee, Amazon, Mercado Livre, AliExpress, Temu).",
-    },
-    {
-      t: "Geração de conteúdo",
-      d: "IA cria títulos, bullets e legendas com foco em CTR e conversão para Instagram, Facebook e Reels.",
-    },
-    {
-      t: "Links rastreáveis",
-      d: "Criação automática de UTM e SubIDs por canal/campanha para medir performance.",
-    },
-    {
-      t: "Publicação e agendamento",
-      d: "Publique agora ou agende horários de pico em poucos cliques.",
-    },
-    {
-      t: "Métricas",
-      d: "Acompanhe cliques, engajamento e receita estimada em tempo real.",
-    },
-    {
-      t: "Colaboração",
-      d: "Convide equipe e gerencie múltiplas contas com segurança.",
-    },
+    { t: "Descoberta de produtos", d: "Selecionamos ofertas com alta tração em marketplaces (Shopee, Amazon, Mercado Livre, AliExpress, Temu)." },
+    { t: "Geração de conteúdo", d: "IA cria títulos, bullets e legendas com foco em CTR e conversão para Instagram, Facebook e Reels." },
+    { t: "Links rastreáveis", d: "Criação automática de UTM e SubIDs por canal/campanha para medir performance." },
+    { t: "Publicação e agendamento", d: "Publique agora ou agende horários de pico em poucos cliques." },
+    { t: "Métricas", d: "Acompanhe cliques, engajamento e receita estimada em tempo real." },
+    { t: "Colaboração", d: "Convide equipe e gerencie múltiplas contas com segurança." },
   ];
 
   return (
@@ -330,7 +311,7 @@ export default function Page() {
           ))}
         </div>
 
-        {/* Telas de exemplo */}
+        {/* Telas de exemplo: Busca / Composer / Métricas */}
         <div className="mt-12 grid gap-8">
           <div>
             <div className="text-sm font-semibold mb-3">1) Buscar produtos</div>
