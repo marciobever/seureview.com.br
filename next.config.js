@@ -1,11 +1,7 @@
+// next.config.js
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  // não usar output: 'standalone'
-  images: {
-    // como servimos estático/local, evita pipeline de otimização no servidor
-    unoptimized: true,
-  },
+module.exports = {
+  output: 'standalone',
+  // opcional: se só usa imagens locais e quer simplificar
+  // images: { unoptimized: true },
 };
-
-module.exports = nextConfig;
