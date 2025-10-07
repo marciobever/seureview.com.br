@@ -1,15 +1,15 @@
 // app/como-funciona/page.tsx
-import * as React from 'react';
-import SafeImage from '@/components/ui/SafeImage';
+import React from "react";
+import Image from "next/image";
 
 export const metadata = {
-  title: 'Como funciona | SeuReview',
+  title: "Como funciona | SeuReview",
   description:
-    'Veja como o SeuReview encontra produtos virais, gera legendas com IA, cria links com UTM/SubIDs e publica em múltiplas redes.',
-  alternates: { canonical: '/como-funciona' },
+    "Veja como o SeuReview encontra produtos virais, gera legendas com IA, cria links com UTM/SubIDs e publica em múltiplas redes.",
+  alternates: { canonical: "/como-funciona" },
 };
 
-// ———— ÍCONES INLINE (sem libs) ————
+// ÍCONES INLINE (sem libs)
 function StarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
@@ -43,13 +43,13 @@ function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-// ———— HELPERS ————
+// HELPERS
 type MiniItem = {
   id: string;
   title: string;
   price: number;
   rating: number;
-  image: string;       // use /public/liquidificador.jpg para garantir imagem
+  image: string;       // ex.: /landing/liquidificador.jpg
   url: string;
   commissionPercent?: number;
   salesCount?: number;
@@ -57,7 +57,7 @@ type MiniItem = {
 
 function formatPrice(n?: number) {
   const v = Number(n ?? 0);
-  return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 function formatPercent(n?: number) {
   const v = Number(n ?? 0);
@@ -65,61 +65,65 @@ function formatPercent(n?: number) {
 }
 function compactSales(n?: number) {
   const v = Number(n ?? 0);
-  if (v >= 1000) return `${Math.round(v / 100) / 10}k`; // 1.2k
+  if (v >= 1000) return `${Math.round(v / 100) / 10}k`;
   return `${v}`;
 }
 
-// ———— MOCKS ————
+// MOCKS (use imagens em /public/landing)
 const MOCK_PRODUCTS: MiniItem[] = [
   {
-    id: 'p1',
-    title: 'Liquidificador 1200W Inox — Copo 2L, 12 Velocidades',
-    price: 219.9,
-    rating: 4.6,
-    image: '/liquidificador.jpg',
-    url: '#',
-    commissionPercent: 12,
-    salesCount: 780,
+    id: "p1",
+    title: "Tênis esportivo leve — amortecimento e respirável",
+    price: 159.9,
+    rating: 4.7,
+    image: "/landing/tenis.jpg",
+    url: "#",
+    commissionPercent: 11,
+    salesCount: 720,
   },
   {
-    id: 'p2',
-    title: 'Liquidificador PowerGlass 800W — Jarra de Vidro 1.5L',
-    price: 189.0,
-    rating: 4.4,
-    image: '/liquidificador.jpg',
-    url: '#',
-    commissionPercent: 10,
-    salesCount: 630,
+    id: "p2",
+    title: "Liquidificador 1200W Inox — Copo 2L, 12 Velocidades",
+    price: 219.9,
+    rating: 4.6,
+    image: "/landing/liquidificador.jpg",
+    url: "#",
+    commissionPercent: 12,
+    salesCount: 680,
   },
 ];
 
-// ———— SUB-COMPONENTES VISUAIS ————
+// SUB-COMPONENTES VISUAIS
 function Badge({
-  tone = 'default',
-  className = '',
+  tone = "default",
+  className = "",
   children,
 }: {
-  tone?: 'default' | 'success';
+  tone?: "default" | "success";
   className?: string;
   children: React.ReactNode;
 }) {
   const base =
-    'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] border';
+    "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] border";
   const theme =
-    tone === 'success'
-      ? 'border-[#C1F1C9] bg-[#EFFFF2] text-[#1B6B3A]'
-      : 'border-gray-200 bg-gray-50 text-gray-700';
+    tone === "success"
+      ? "border-[#C1F1C9] bg-[#EFFFF2] text-[#1B6B3A]"
+      : "border-gray-200 bg-gray-50 text-gray-700";
   return <span className={`${base} ${theme} ${className}`}>{children}</span>;
 }
 
 function ProductCard({ product }: { product: MiniItem }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-[#FFD9CF] bg-white shadow-sm transition hover:shadow-md hover:border-[#ffc9bc]">
+    <div className="overflow-hidden rounded-xl border border-[#FFD9CF] bg-white shadow-sm">
       <div className="relative aspect-[4/3] bg-[#FFF9F7] border-b border-[#FFD9CF]">
-        <SafeImage
+        {/* next/image no Server Component, sem event handlers */}
+        <Image
           src={product.image}
           alt={product.title}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 640px) 100vw, 50vw"
+          priority
         />
       </div>
 
@@ -136,14 +140,14 @@ function ProductCard({ product }: { product: MiniItem }) {
           <div className="text-sm font-semibold">{formatPrice(product.price)}</div>
         </div>
 
-        {/* LINHA DE CHIPS: esquerda = comissão (%), direita = vendas */}
+        {/* Comissão (esq) e vendas (dir) */}
         <div className="flex items-center justify-between pt-1">
           <Badge tone="success" className="inline-flex items-center gap-1">
             <PercentIcon className="w-3 h-3" />
             {formatPercent(product.commissionPercent ?? 0)}
           </Badge>
 
-          {typeof product.salesCount === 'number' && (
+          {typeof product.salesCount === "number" && (
             <Badge className="inline-flex items-center gap-1">
               <TrendingIcon className="w-3 h-3" />
               {compactSales(product.salesCount)} vendas
@@ -281,12 +285,30 @@ function MockMetrics() {
 
 export default function Page() {
   const passos = [
-    { t: 'Descoberta de produtos', d: 'Selecionamos ofertas com alta tração em marketplaces (Shopee, Amazon, Mercado Livre, AliExpress, Temu).' },
-    { t: 'Geração de conteúdo', d: 'IA cria títulos, bullets e legendas com foco em CTR e conversão para Instagram, Facebook e Reels.' },
-    { t: 'Links rastreáveis', d: 'Criação automática de UTM e SubIDs por canal/campanha para medir performance.' },
-    { t: 'Publicação e agendamento', d: 'Publique agora ou agende horários de pico em poucos cliques.' },
-    { t: 'Métricas', d: 'Acompanhe cliques, engajamento e receita estimada em tempo real.' },
-    { t: 'Colaboração', d: 'Convide equipe e gerencie múltiplas contas com segurança.' },
+    {
+      t: "Descoberta de produtos",
+      d: "Selecionamos ofertas com alta tração em marketplaces (Shopee, Amazon, Mercado Livre, AliExpress, Temu).",
+    },
+    {
+      t: "Geração de conteúdo",
+      d: "IA cria títulos, bullets e legendas com foco em CTR e conversão para Instagram, Facebook e Reels.",
+    },
+    {
+      t: "Links rastreáveis",
+      d: "Criação automática de UTM e SubIDs por canal/campanha para medir performance.",
+    },
+    {
+      t: "Publicação e agendamento",
+      d: "Publique agora ou agende horários de pico em poucos cliques.",
+    },
+    {
+      t: "Métricas",
+      d: "Acompanhe cliques, engajamento e receita estimada em tempo real.",
+    },
+    {
+      t: "Colaboração",
+      d: "Convide equipe e gerencie múltiplas contas com segurança.",
+    },
   ];
 
   return (
@@ -297,10 +319,9 @@ export default function Page() {
           Um fluxo direto para transformar produtos em conteúdo que vende.
         </p>
 
-        {/* passo-a-passo em cards */}
         <div className="mt-10 grid md:grid-cols-3 gap-6">
           {passos.map((p) => (
-            <div key={p.t} className="card transition hover:shadow-md">
+            <div key={p.t} className="card">
               <div className="card-body">
                 <div className="font-semibold text-lg">{p.t}</div>
                 <p className="mt-2 text-sm text-gray-600">{p.d}</p>
@@ -309,7 +330,7 @@ export default function Page() {
           ))}
         </div>
 
-        {/* Telas de exemplo: Busca / Composer / Métricas */}
+        {/* Telas de exemplo */}
         <div className="mt-12 grid gap-8">
           <div>
             <div className="text-sm font-semibold mb-3">1) Buscar produtos</div>
