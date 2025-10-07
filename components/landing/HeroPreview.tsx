@@ -1,152 +1,82 @@
 'use client';
 
-import * as React from 'react';
-import { Star, Percent, TrendingUp, Search as SearchIcon, SlidersHorizontal } from 'lucide-react';
+import Link from 'next/link';
+import HeroPreview from './HeroPreview';
 
-type MiniItem = {
-  id: string;
-  title: string;
-  price: number;
-  rating: number;
-  image: string;
-  commissionPercent?: number;
-  salesCount?: number;
-};
+const chips = ['Legenda IA', 'UTM + SubIDs', 'Agendamento', 'Shopee • Amazon • ML'];
 
-function formatPrice(n: number) {
-  return Number(n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-function formatPercent(n?: number) {
-  if (n == null) return '—';
-  return `${Math.round(n)}%`;
-}
-function formatSales(n?: number) {
-  if (n == null) return '—';
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return n.toLocaleString('pt-BR');
-}
-
-const DEFAULTS: MiniItem[] = [
-  {
-    id: '1',
-    title: 'Tênis esportivo leve (amortecimento + malha respirável)',
-    price: 179.9,
-    rating: 4.8,
-    image:
-      'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200&auto=format&fit=crop',
-    commissionPercent: 12,
-    salesCount: 864,
-  },
-  {
-    id: '2',
-    title: 'Liquidificador 900W copo 2L 12 velocidades + pulsar',
-    price: 219.9,
-    rating: 4.6,
-    image: '/landing/liquidificador.jpg', // ← sua imagem local em /public
-    commissionPercent: 10,
-    salesCount: 732,
-  },
-];
-
-export default function HeroPreview({
-  initialItems,
-}: {
-  initialItems?: MiniItem[];
-}) {
-  const [items] = React.useState<MiniItem[]>(initialItems ?? DEFAULTS);
-  const [query, setQuery] = React.useState('');
-
+export default function Hero() {
   return (
-    <div className="w-full max-w-[680px] p-4 md:p-5">
-      {/* “Barra” do mock */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="text-sm font-medium text-gray-800">Prévia do painel</div>
-        <div className="inline-flex items-center gap-1.5 text-[11px] text-gray-500">
-          <span className="h-2 w-2 rounded-full bg-emerald-500" />
-          Mock interativo
-        </div>
-      </div>
+    <section className="relative overflow-hidden">
+      {/* glow suave */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        aria-hidden
+        style={{
+          background:
+            'radial-gradient(1200px 600px at 10% -10%, rgba(238,77,45,0.16) 0%, rgba(238,77,45,0) 60%), radial-gradient(900px 500px at 100% 0%, rgba(255,140,105,0.12) 0%, rgba(255,140,105,0) 55%)',
+        }}
+      />
 
-      {/* Busca compacta */}
-      <div className="mt-3 rounded-xl border border-[#FFD9CF] bg-white/70 backdrop-blur px-3 py-2">
-        <div className="flex items-center gap-2">
-          <SearchIcon className="w-4 h-4 text-gray-400" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar produtos…"
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
-          />
-          <button
-            type="button"
-            className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs hover:bg-[#FFF4F0]"
-            title="Filtros"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            Filtros
-          </button>
-        </div>
-      </div>
+      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Texto */}
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-medium text-[#EE4D2D] bg-[#FFF1ED] border border-[#FFD9CF] rounded-full px-2.5 py-1">
+              Novo • Multi-marketplaces
+            </p>
+            <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
+              <span className="bg-gradient-to-r from-[#FF8A66] to-[#EE4D2D] bg-clip-text text-transparent">
+                Encontre produtos virais
+              </span>{' '}
+              e publique em minutos.
+            </h1>
+            <p className="mt-4 text-lg text-gray-600 max-w-[58ch]">
+              SeuReview conecta você às melhores ofertas da <strong>Shopee</strong>, <strong>Amazon</strong>,
+              <strong> Mercado Livre</strong>, <strong>AliExpress</strong> e <strong>Temu</strong> — com
+              legendas inteligentes e links rastreáveis.
+            </p>
 
-      {/* Grid de cards (2 itens) */}
-      <div className="mt-4 grid grid-cols-2 gap-3">
-        {items.map((p) => (
-          <div key={p.id} className="rounded-xl overflow-hidden border border-[#FFD9CF] bg-white shadow-sm">
-            <div className="aspect-[4/3] bg-[#FFF9F7]">
-              <img
-                src={p.image}
-                alt={p.title}
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/signup"
+                className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm"
+              >
+                Começar agora
+              </Link>
+              <Link
+                href="/como-funciona"
+                className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0] text-[#111827]"
+              >
+                Ver como funciona
+              </Link>
             </div>
 
-            <div className="p-3 space-y-2">
-              <div className="text-[13px] font-semibold leading-snug line-clamp-2 text-[#111827]">
-                {p.title}
-              </div>
-
-              {/* rating + preço */}
-              <div className="flex items-center justify-between">
-                <div className="inline-flex items-center gap-1 text-[13px] text-[#6B7280]">
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  <span>{p.rating.toFixed(1)}</span>
-                </div>
-                <div className="text-[13px] font-semibold">{formatPrice(p.price)}</div>
-              </div>
-
-              {/* linha: comissão (% no chip verde) + (à direita) vendas */}
-              <div className="flex items-center gap-2 pt-1">
-                <span className="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] border-emerald-200 bg-emerald-50 text-emerald-700">
-                  <Percent className="w-3 h-3" />
-                  {formatPercent(p.commissionPercent)}
-                </span>
-
-                <span className="ml-auto inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[11px] text-gray-700">
-                  <TrendingUp className="w-3 h-3" />
-                  Vendas {formatSales(p.salesCount)}
-                </span>
-              </div>
-
-              {/* CTA */}
-              <div className="pt-1">
-                <button
-                  type="button"
-                  className="w-full rounded-lg bg-[#EE4D2D] hover:bg-[#D8431F] text-white text-sm py-2"
-                  title="Selecionar"
+            {/* chips */}
+            <div className="mt-8 flex flex-wrap items-center gap-2 text-xs">
+              {chips.map((c) => (
+                <span
+                  key={c}
+                  className="inline-flex items-center rounded-full px-3 py-1 border border-[#FFD9CF] bg-white/80 backdrop-blur hover:bg-white transition"
                 >
-                  Selecionar
-                </button>
-              </div>
+                  {c}
+                </span>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Rodapé do mock */}
-      <div className="mt-3 text-[11px] text-gray-500 text-center">
-        Prévia ilustrativa — sem integração real.
+          {/* Prévia (tudo dentro do card) */}
+          <div className="relative flex justify-center md:justify-end">
+            <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
+              <HeroPreview />
+            </div>
+            <div
+              className="pointer-events-none absolute -z-10 -right-10 -top-10 h-48 w-48 rounded-full blur-3xl"
+              style={{ background: 'rgba(238,77,45,0.20)' }}
+            />
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
