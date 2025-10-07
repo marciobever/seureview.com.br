@@ -1,88 +1,62 @@
 "use client";
 
-import * as React from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
-/** Tipos/Mock */
 type MiniItem = {
   id: string;
   title: string;
+  price: string;
+  rating: string;
   image: string;
-  price: number;
-  rating: number;
-  commissionPct: number; // ex.: 7 -> 7%
-  sales: number;         // ex.: 23
+  commission: string; // ex: "7%"
+  sales: string;      // ex: "Vendas 12"
 };
 
-const MOCK: MiniItem[] = [
+// dois itens só para ilustrar
+const miniItems: MiniItem[] = [
   {
     id: "1",
     title: "Funko Pop – Produto Oficial Funko Pronta Entrega",
+    price: "R$ 59,99",
+    rating: "5.0",
     image:
-      "https://images.unsplash.com/photo-1600431521340-491eca880813?q=80&w=800&auto=format&fit=crop",
-    price: 59.99,
-    rating: 5.0,
-    commissionPct: 3,
-    sales: 3,
+      "https://images.unsplash.com/photo-1523473827532-4b37d8dd948d?q=80&w=1200&auto=format&fit=crop",
+    commission: "3%",
+    sales: "Vendas 3",
   },
   {
     id: "2",
     title: "Funko Pop UV Protector – Acrílico Oficial Funko",
+    price: "R$ 95,92",
+    rating: "5.0",
     image:
-      "https://images.unsplash.com/photo-1549921296-3a6b3f5a0c54?q=80&w=800&auto=format&fit=crop",
-    price: 95.92,
-    rating: 5.0,
-    commissionPct: 7,
-    sales: 2,
-  },
-  {
-    id: "3",
-    title: "Mini Mixer 5 em 1 Portátil",
-    image:
-      "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?q=80&w=800&auto=format&fit=crop",
-    price: 129.0,
-    rating: 4.9,
-    commissionPct: 5,
-    sales: 11,
-  },
-  {
-    id: "4",
-    title: "Suporte Acrílico para Colecionáveis",
-    image:
-      "https://images.unsplash.com/photo-1520975922203-b15d2f1d2c5b?q=80&w=800&auto=format&fit=crop",
-    price: 49.9,
-    rating: 4.8,
-    commissionPct: 6,
-    sales: 7,
+      "https://images.unsplash.com/photo-1481437156560-3205f6a55735?q=80&w=1200&auto=format&fit=crop",
+    commission: "7%",
+    sales: "Vendas 2",
   },
 ];
 
-/** Helpers */
-function formatBRL(n: number) {
-  return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-/** Badge genérica */
-function Badge({
+function Chip({
   children,
-  tone = "muted",
+  tone = "default",
 }: {
   children: React.ReactNode;
-  tone?: "success" | "muted";
+  tone?: "default" | "success";
 }) {
   const base =
-    "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium border";
-  const style =
+    "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium";
+  const styles =
     tone === "success"
-      ? "bg-green-50/80 text-green-700 border-green-200"
-      : "bg-gray-100/80 text-gray-600 border-gray-200";
-  return <span className={`${base} ${style}`}>{children}</span>;
+      ? "bg-[#E9F8F1] text-[#0E8F62] border border-[#C7F0E0]"
+      : "bg-[#F3F4F6] text-[#374151] border border-[#E5E7EB]";
+  return <span className={`${base} ${styles}`}>{children}</span>;
 }
 
-/** Mini card (coeso com o app) */
 function MiniCard({ item }: { item: MiniItem }) {
   return (
-    <div className="rounded-xl border border-[#FFD9CF] bg-white/80 backdrop-blur shadow-sm overflow-hidden transition-transform duration-200 hover:-translate-y-0.5">
-      <div className="aspect-[4/3] bg-[#FFF9F7] border-b border-[#FFD9CF]">
+    <div className="rounded-xl border border-[#FFD9CF] bg-white overflow-hidden shadow-[0_8px_30px_rgba(17,24,39,0.04)]">
+      <div className="aspect-[4/3] bg-[#FFF7F5]">
         <img
           src={item.image}
           alt={item.title}
@@ -90,35 +64,26 @@ function MiniCard({ item }: { item: MiniItem }) {
           loading="lazy"
         />
       </div>
-
-      <div className="p-3">
-        <h3 className="text-[13px] font-semibold text-[#111827] line-clamp-2">
+      <div className="p-3 space-y-2">
+        <h4 className="text-[12px] font-semibold text-[#111827] leading-snug line-clamp-2">
           {item.title}
-        </h3>
+        </h4>
 
-        <div className="mt-2 flex items-center justify-between">
-          <div className="flex items-center gap-1 text-sm text-[#6B7280]">
-            <span aria-hidden>⭐️</span>
-            <span>{item.rating.toFixed(1)}</span>
-          </div>
-          <div className="text-sm font-semibold">{formatBRL(item.price)}</div>
+        <div className="flex items-center justify-between">
+          <div className="text-[12px] text-[#6B7280]">⭐ {item.rating}</div>
+          <div className="text-[13px] font-semibold">{item.price}</div>
         </div>
 
-        {/* Linha de chips: % e Vendas, alinhados à direita */}
-        <div className="mt-2 flex items-center justify-end gap-2">
-          <Badge tone="success">
-            <span aria-hidden>%</span> {item.commissionPct}%
-          </Badge>
-          <Badge>
-            <span aria-hidden>↗</span> Vendas {item.sales}
-          </Badge>
+        <div className="flex items-center justify-end gap-2">
+          <Chip tone="success">% {item.commission}</Chip>
+          <Chip>{item.sales}</Chip>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <button className="px-3 py-1.5 rounded-lg text-xs bg-[#EE4D2D] hover:bg-[#D8431F] text-white">
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          <button className="rounded-lg bg-[#EE4D2D] text-white text-[12px] py-2">
             Selecionar
           </button>
-          <button className="px-3 py-1.5 rounded-lg text-xs border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+          <button className="rounded-lg border border-[#FFD9CF] text-[12px] py-2">
             Ver na Shopee
           </button>
         </div>
@@ -127,101 +92,140 @@ function MiniCard({ item }: { item: MiniItem }) {
   );
 }
 
-/** Select bem simples, para o preview */
-function SortSelect({
-  value,
-  onChange,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-}) {
+export default function Hero() {
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="px-3 py-1.5 text-xs rounded-lg border border-[#FFD9CF] bg-white/80 hover:bg-white"
-    >
-      <option>Relevância</option>
-      <option>Comissão (R$) — maior</option>
-      <option>Comissão (%) — maior</option>
-      <option>Vendas — maior</option>
-      <option>Avaliação — maior</option>
-      <option>Preço — maior</option>
-      <option>Preço — menor</option>
-    </select>
-  );
-}
+    <section className="relative overflow-hidden hero-gradient">
+      {/* glow de fundo */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(900px 480px at 10% -10%, rgba(238,77,45,0.16) 0%, rgba(238,77,45,0) 60%), radial-gradient(700px 420px at 100% 0%, rgba(255,140,105,0.12) 0%, rgba(255,140,105,0) 55%)",
+        }}
+      />
 
-/** Preview inteiro vai DENTRO do cartão do hero */
-export default function HeroPreview() {
-  const [tab, setTab] = React.useState<"produtos" | "historico">("produtos");
-  const [q, setQ] = React.useState("");
-  const [sort, setSort] = React.useState("Relevância");
+      <div className="mx-auto max-w-7xl px-6 py-14 md:py-18">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Texto */}
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-medium text-[#EE4D2D] bg-[#FFF1ED] border border-[#FFD9CF] rounded-full px-2.5 py-1">
+              Novo • Multi-marketplaces
+            </p>
 
-  // lista pequena só pra compor visualmente
-  const items = React.useMemo(() => {
-    let arr = MOCK.slice(0, 4);
-    if (q.trim()) {
-      const s = q.toLowerCase();
-      arr = arr.filter((i) => i.title.toLowerCase().includes(s));
-    }
-    return arr;
-  }, [q]);
+            <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
+              <span className="text-gradient">Encontre produtos virais</span>{" "}
+              e publique em minutos.
+            </h1>
 
-  return (
-    <div className="p-3 md:p-4">
-      {/* Tabs */}
-      <div className="grid grid-cols-2 rounded-xl overflow-hidden border border-[#FFD9CF] bg-white/70 text-xs">
-        <button
-          className={`px-3 py-2 ${tab === "produtos" ? "bg-[#EE4D2D] text-white" : "hover:bg-[#FFF4F0]"}`}
-          onClick={() => setTab("produtos")}
-        >
-          Produtos
-        </button>
-        <button
-          className={`px-3 py-2 ${tab === "historico" ? "bg-[#EE4D2D] text-white" : "hover:bg-[#FFF4F0]"}`}
-          onClick={() => setTab("historico")}
-        >
-          Histórico
-        </button>
-      </div>
+            <p className="mt-4 text-lg text-gray-600 max-w-[58ch]">
+              SeuReview conecta você às melhores ofertas da{" "}
+              <strong>Shopee</strong>, <strong>Amazon</strong>,{" "}
+              <strong>Mercado Livre</strong>, <strong>AliExpress</strong> e{" "}
+              <strong>Temu</strong> — com legendas inteligentes e links
+              rastreáveis.
+            </p>
 
-      {/* Conteúdo limitado ao cartão */}
-      <div className="mt-3 h-[360px] md:h-[380px] flex flex-col">
-        {/* Filtros (fixo) */}
-        <div className="flex items-center gap-2">
-          <div className="relative flex-1">
-            <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
-            <input
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-              placeholder="Buscar por título…"
-              className="pl-7 pr-3 py-2 w-full text-xs rounded-lg border border-[#FFD9CF] bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#EE4D2D]/30"
-            />
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/signup" className="btn btn-primary">
+                Começar agora
+              </Link>
+              <Link href="/como-funciona" className="btn btn-ghost">
+                Ver como funciona
+              </Link>
+            </div>
+
+            {/* chips informativos */}
+            <div className="mt-8 flex flex-wrap items-center gap-2 text-xs">
+              {["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"].map(
+                (c, i) => (
+                  <motion.span
+                    key={c}
+                    initial={{ y: 10, opacity: 0 }}
+                    whileInView={{ y: 0, opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.4, delay: 0.06 * i }}
+                    whileHover={{ y: -2, scale: 1.03 }}
+                    className="chip border-[#FFD9CF] bg-white/90 backdrop-blur"
+                  >
+                    {c}
+                  </motion.span>
+                )
+              )}
+            </div>
           </div>
-          <SortSelect value={sort} onChange={setSort} />
-          <button className="px-3 py-2 rounded-lg text-xs bg-[#EE4D2D] hover:bg-[#D8431F] text-white">
-            Buscar
-          </button>
-        </div>
 
-        {/* Área scrollável dos cards */}
-        <div className="mt-3 flex-1 overflow-hidden">
-          <div className="h-full overflow-y-auto pr-1">
-            {tab === "historico" ? (
-              <div className="h-full grid place-items-center text-[12px] text-gray-500">
-                Seu histórico aparece aqui no app. (Prévia)
+          {/* Mock do painel — compacto, sem rolagem */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="flex items-center justify-center"
+          >
+            <motion.div
+              // leve flutuação
+              animate={{ y: [0, -4, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="w-full max-w-[520px]"
+            >
+              <div className="rounded-2xl border border-[#FFD9CF] bg-white/80 backdrop-blur-md shadow-[0_25px_80px_rgba(238,77,45,0.08)] overflow-hidden">
+                {/* cabeçalho tabs */}
+                <div className="p-2">
+                  <div className="grid grid-cols-2 rounded-xl border border-[#FFD9CF] bg-white/80">
+                    <div className="px-3 py-2 text-center text-[12px] font-semibold rounded-xl bg-[#EE4D2D] text-white">
+                      Produtos
+                    </div>
+                    <div className="px-3 py-2 text-center text-[12px] text-[#6B7280]">
+                      Histórico
+                    </div>
+                  </div>
+                </div>
+
+                {/* barra de busca */}
+                <div className="px-3 pb-2">
+                  <div className="flex gap-2">
+                    <input
+                      disabled
+                      placeholder="Buscar por título…"
+                      className="flex-1 px-3 py-2 text-[12px] rounded-lg border border-[#FFD9CF] bg-white/80 pointer-events-none"
+                    />
+                    <select
+                      disabled
+                      className="px-2.5 py-2 text-[12px] rounded-lg border border-[#FFD9CF] bg-white/80 pointer-events-none"
+                    >
+                      <option>Relevância</option>
+                      <option>Comissão (R$) — maior</option>
+                    </select>
+                    <button
+                      className="px-3 py-2 text-[12px] rounded-lg bg-[#EE4D2D] text-white pointer-events-none"
+                      disabled
+                    >
+                      Buscar
+                    </button>
+                  </div>
+                </div>
+
+                {/* grade de cards — ALTURA FIXA */}
+                <div className="px-3 pb-3">
+                  <div
+                    className="
+                      grid grid-cols-2 gap-3
+                      h-[300px] md:h-[320px]
+                      overflow-hidden
+                      pointer-events-none
+                    "
+                  >
+                    {miniItems.map((it) => (
+                      <MiniCard key={it.id} item={it} />
+                    ))}
+                  </div>
+                </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {items.map((it) => (
-                  <MiniCard key={it.id} item={it} />
-                ))}
-              </div>
-            )}
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
