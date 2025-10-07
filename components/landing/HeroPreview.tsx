@@ -6,7 +6,7 @@ import * as React from 'react';
 const PRELOAD = [
   {
     id: 'shoe',
-    title: 'Tênis Nike Air Zoom Pegasus — corrida e amortecimento',
+    title: 'Tênis Nike Air Zoom Pegasus corrida e amortecimento',
     price: 449.9,
     rating: 4.8,
     image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1600&auto=format&fit=crop', // pode trocar por /tenis.jpg se quiser local
@@ -16,7 +16,7 @@ const PRELOAD = [
   },
   {
     id: 'liquidificador',
-    title: 'Liquidificador Premium 900W — 12 velocidades',
+    title: 'Liquidificador Premium 900W 12 velocidades',
     price: 179.9,
     rating: 4.6,
     image: '/landing/liquidificador.jpg', // <-- usa a imagem do /public
