@@ -1,119 +1,79 @@
 // app/automacoes/page.tsx
+import * as React from 'react';
+
 export const metadata = {
-  title: "Automação do bot | SeuReview",
+  title: 'Automações | SeuReview',
   description:
-    "Responda automaticamente quem comenta 'quero': reply público + DM com opções (produto, alternativa, grupo VIP). Integração com marketplaces.",
-  alternates: { canonical: "/automacoes" },
+    'Crie robôs para publicar, reagendar, monitorar preço e comissionamento em marketplaces.',
+  alternates: { canonical: '/automacoes' },
 };
 
-// Ícones inline mínimos
-function ReplyIcon(props: React.SVGProps<SVGSVGElement>) {
+// Ícones inline (sem dependências)
+function BoltIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" {...props}>
-      <path d="M10 8V5l-7 7 7 7v-3h4a6 6 0 000-12h-1" strokeWidth="2" />
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" />
     </svg>
   );
 }
-function MessageIcon(props: React.SVGProps<SVGSVGElement>) {
+function ClockIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" {...props}>
-      <path d="M21 12a8.5 8.5 0 01-8.5 8.5H6l-3 3v-3.5A8.5 8.5 0 016.5 3.5H12A8.5 8.5 0 0121 12z" strokeWidth="2" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
+      <circle cx="12" cy="12" r="9" strokeWidth="2" />
+      <path d="M12 7v5l3 3" strokeWidth="2" />
     </svg>
   );
 }
-function ChainIcon(props: React.SVGProps<SVGSVGElement>) {
+function CheckIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
-    <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" {...props}>
-      <path d="M10 13a5 5 0 007.07 0l2.83-2.83a5 5 0 10-7.07-7.07L10 4" strokeWidth="2" />
-      <path d="M14 11a5 5 0 00-7.07 0L4.1 13.83a5 5 0 107.07 7.07L14 20" strokeWidth="2" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
+      <path d="M20 6L9 17l-5-5" strokeWidth="2" />
+    </svg>
+  );
+}
+function TagIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
+      <path d="M20 10V4H14L4 14l6 6 10-10z" strokeWidth="2" />
+      <circle cx="16" cy="8" r="2" strokeWidth="2" />
+    </svg>
+  );
+}
+function BellIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
+      <path d="M12 22a2 2 0 0 0 2-2H10a2 2 0 0 0 2 2Zm6-6V11a6 6 0 1 0-12 0v5l-2 2h18l-2-2Z" strokeWidth="2" />
     </svg>
   );
 }
 
-function BotFlowDemo() {
+function Badge({
+  tone = 'default',
+  children,
+  className = '',
+}: {
+  tone?: 'default' | 'success' | 'warn';
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const styles =
+    tone === 'success'
+      ? 'border-[#C1F1C9] bg-[#EFFFF2] text-[#1B6B3A]'
+      : tone === 'warn'
+      ? 'border-[#FFE3B3] bg-[#FFF8E8] text-[#7A4B00]'
+      : 'border-gray-200 bg-gray-50 text-gray-700';
   return (
-    <div className="rounded-2xl border border-[#FFD9CF] bg-white/80 backdrop-blur">
-      <div className="p-3 border-b border-[#FFD9CF] bg-[#FFF7F5] font-semibold text-sm">
-        Fluxo: comentário → reply público → DM com botões
-      </div>
-
-      <div className="p-4 grid md:grid-cols-3 gap-4">
-        <div className="rounded-xl border p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ReplyIcon className="w-4 h-4" />
-            Detecção de “quero”
-          </div>
-          <p className="mt-2 text-sm text-gray-600">
-            O bot monitora comentários e identifica “quero” (variações/acentos).
-          </p>
-          <div className="mt-3 rounded-lg border p-3 text-sm">
-            <div><strong>@cliente</strong>: Quero</div>
-            <div className="text-gray-600">↳ Detectado: <span className="font-mono">quero</span></div>
-          </div>
-        </div>
-
-        <div className="rounded-xl border p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ReplyIcon className="w-4 h-4" />
-            Reply no post
-          </div>
-          <p className="mt-2 text-sm text-gray-600">
-            O robô responde: “Pronto! Enviei por DM.” (personalizável).
-          </p>
-          <div className="mt-3 rounded-lg border p-3 text-sm bg-gray-50">
-            Pronto! Enviei o link por DM. Se não aparecer, me avise aqui. ✅
-          </div>
-        </div>
-
-        <div className="rounded-xl border p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <MessageIcon className="w-4 h-4" />
-            DM com 3 botões
-          </div>
-          <p className="mt-2 text-sm text-gray-600">
-            Botões: Produto da publicação, Segunda opção e Grupo VIP (WhatsApp).
-          </p>
-          <div className="mt-3 rounded-lg border p-3 text-sm space-y-2">
-            <div>Olá! 👋 Seguem as opções:</div>
-            <div className="flex flex-wrap gap-2">
-              <button className="px-3 py-1.5 rounded-md text-xs border">Produto da publicação</button>
-              <button className="px-3 py-1.5 rounded-md text-xs border">Segunda opção</button>
-              <button className="px-3 py-1.5 rounded-md text-xs border">Grupo VIP</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="px-4 pb-4">
-        <div className="rounded-xl border p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <ChainIcon className="w-4 h-4" />
-            Integração com marketplaces
-          </div>
-          <p className="mt-2 text-sm text-gray-600">
-            As URLs dos botões podem vir do mapeamento da publicação (ex.: Shopee/ML/Amazon) e usar UTM/SubIDs por canal.
-          </p>
-        </div>
-      </div>
-    </div>
+    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] border ${styles} ${className}`}>
+      {children}
+    </span>
   );
 }
 
-function ChannelsCards() {
-  const items = [
-    { name: "Shopee", desc: "Pega link do item da publicação e gera SubIDs." },
-    { name: "Amazon", desc: "Encurta, adiciona UTM e valida região." },
-    { name: "Mercado Livre", desc: "Escolhe melhor vendedor e aplica tag de campanha." },
-  ];
+function RuleRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid md:grid-cols-3 gap-4">
-      {items.map((it) => (
-        <div key={it.name} className="rounded-xl border p-4 bg-white/80 backdrop-blur">
-          <div className="font-semibold">{it.name}</div>
-          <p className="mt-1 text-sm text-gray-600">{it.desc}</p>
-          <div className="mt-3 text-[11px] text-gray-500">* Demonstração visual</div>
-        </div>
-      ))}
+    <div className="flex items-center justify-between text-sm">
+      <div className="text-gray-600">{label}</div>
+      <div className="font-medium">{value}</div>
     </div>
   );
 }
@@ -122,18 +82,130 @@ export default function Page() {
   return (
     <main className="section">
       <div className="max-container">
-        <h1 className="text-3xl md:text-4xl font-bold">Automação do bot</h1>
+        <h1 className="text-3xl md:text-4xl font-bold">Automações</h1>
         <p className="mt-3 text-gray-600 max-w-2xl">
-          Responda automaticamente quem comenta “quero”: reply público e DM com três opções — já com UTM/SubIDs.
+          Configure robôs que fazem o trabalho por você: publicar automaticamente, reagendar top performers,
+          monitorar preço e comissões — tudo no piloto automático.
         </p>
 
-        <div className="mt-8">
-          <BotFlowDemo />
+        {/* highlight */}
+        <div className="mt-6 rounded-xl border border-[#FFD9CF] bg-[#FFF7F5] p-4 flex items-center gap-3">
+          <BoltIcon className="w-5 h-5 text-[#EE4D2D]" />
+          <div className="text-sm">
+            <span className="font-semibold">Dica:</span> Automações rodam no app autenticado. Aqui é uma prévia visual do que você vai poder criar.
+          </div>
         </div>
 
-        <div className="mt-8">
-          <div className="text-sm font-semibold mb-3">Publicações por canal</div>
-          <ChannelsCards />
+        {/* grade de “robôs” */}
+        <div className="mt-10 grid md:grid-cols-3 gap-6">
+          {/* 1) Publicação automática Amazon */}
+          <div className="card">
+            <div className="card-body space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="font-semibold">Publicação automática (Amazon)</div>
+                <Badge tone="success" className="whitespace-nowrap">
+                  <CheckIcon className="w-3 h-3" />
+                  Pronto p/ usar
+                </Badge>
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Filtros</div>
+                <RuleRow label="Categoria" value="Eletroportáteis" />
+                <RuleRow label="Comissão mínima" value="≥ 10%" />
+                <RuleRow label="Avaliação" value="≥ 4.3 ★" />
+                <RuleRow label="Preço" value="R$ 100 — R$ 300" />
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Ações</div>
+                <ul className="text-sm space-y-1">
+                  <li className="flex items-center gap-2"><CheckIcon className="w-4 h-4" /> Gerar legenda com IA</li>
+                  <li className="flex items-center gap-2"><TagIcon className="w-4 h-4" /> Criar UTM/SubIDs por canal</li>
+                  <li className="flex items-center gap-2"><ClockIcon className="w-4 h-4" /> Agendar em horários de pico</li>
+                </ul>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Badge>Frequência: hora em hora</Badge>
+                <Badge tone="warn">Modo: rascunho</Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* 2) Reciclar top performers */}
+          <div className="card">
+            <div className="card-body space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="font-semibold">Reciclar Top Performers</div>
+                <Badge className="whitespace-nowrap">Beta</Badge>
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Critérios</div>
+                <RuleRow label="Período" value="Últimos 7 dias" />
+                <RuleRow label="CTR" value="≥ 3%" />
+                <RuleRow label="Salvações" value="≥ 50" />
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Ações</div>
+                <ul className="text-sm space-y-1">
+                  <li className="flex items-center gap-2"><CheckIcon className="w-4 h-4" /> Gerar 2 variações de legenda</li>
+                  <li className="flex items-center gap-2"><ClockIcon className="w-4 h-4" /> Re-agendar nos melhores slots</li>
+                </ul>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Badge>Frequência: diária</Badge>
+                <Badge tone="success">Simulação</Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* 3) Alerta de preço Shopee */}
+          <div className="card">
+            <div className="card-body space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="font-semibold">Alerta de Preço (Shopee)</div>
+                <Badge tone="success" className="whitespace-nowrap">
+                  <BellIcon className="w-3 h-3" />
+                  Ativo
+                </Badge>
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Condição</div>
+                <RuleRow label="Queda de preço" value="≥ 8%" />
+                <RuleRow label="Estoque" value="Disponível" />
+              </div>
+
+              <div className="rounded-lg border p-3 space-y-2">
+                <div className="text-xs text-gray-500">Notificação</div>
+                <ul className="text-sm space-y-1">
+                  <li className="flex items-center gap-2"><BellIcon className="w-4 h-4" /> Email imediato</li>
+                  <li className="flex items-center gap-2"><BellIcon className="w-4 h-4" /> Telegram (opcional)</li>
+                </ul>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Badge>Frequência: a cada 30 min</Badge>
+                <Badge>Limite/dia: 20 alertas</Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA para o app */}
+        <div className="mt-12 rounded-xl border border-[#FFD9CF] bg-white p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-0.5">
+            <div className="font-semibold">Pronto para automatizar?</div>
+            <p className="text-sm text-gray-600">Crie suas regras no painel autenticado e deixe o robô trabalhar.</p>
+          </div>
+          <div className="flex gap-2">
+            <a href="https://app.seureview.com.br/signup" className="btn btn-primary text-sm">Criar conta grátis</a>
+            <a href="https://app.seureview.com.br/login" className="btn btn-ghost text-sm">Entrar</a>
+          </div>
         </div>
       </div>
     </main>
