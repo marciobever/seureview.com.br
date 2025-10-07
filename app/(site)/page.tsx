@@ -1,63 +1,48 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Hero from '@/components/Hero';
 import ComoFunciona from '@/components/ComoFunciona';
 import Recursos from '@/components/Recursos';
 import Depoimentos from '@/components/Depoimentos';
-import FAQ from '@/components/FAQ';
-import CTA from '@/components/CTA';
 import Newsletter from '@/components/Newsletter';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://seureview.com.br';
-
-export const metadata: Metadata = {
-  title: 'Produtos virais e posts em minutos',
-  description:
-    'Descubra produtos quentes da Shopee, Amazon, Mercado Livre, AliExpress e Temu. Gere legendas inteligentes, links rastreáveis e publique nas suas redes com o SeuReview.',
-  alternates: { canonical: '/' },
-  openGraph: {
-    type: 'website',
-    url: SITE_URL,
-    title: 'SeuReview — Produtos virais e posts em minutos',
-    description:
-      'Ache produtos virais, gere legendas e publique em minutos nas suas redes sociais.',
-    images: [{ url: '/og.jpg', width: 1200, height: 630, alt: 'SeuReview' }],
-    siteName: 'SeuReview',
-    locale: 'pt_BR',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'SeuReview — Produtos virais e posts em minutos',
-    description:
-      'Descubra, gere e publique: produtos virais, legendas inteligentes e links rastreáveis.',
-    images: ['/og.jpg'],
-  },
-};
-
-export default function Page() {
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: 'SeuReview',
-    url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
-  };
-
+export default function LandingPage() {
   return (
-    <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+    <main className="min-h-screen overflow-hidden">
+      {/* HERO */}
       <Hero />
-      <section className="mx-auto max-w-7xl px-4 md:px-6 space-y-32 py-16">
-        <ComoFunciona />
-        <Recursos />
-        <Depoimentos />
-        <FAQ />
-        <CTA />
-        <div className="mt-12">
-          <Newsletter />
+
+      {/* Blocos principais — cada componente já tem seu espaçamento interno */}
+      <Recursos />
+      <Depoimentos />
+
+      {/* CTA + Newsletter com mais respiro */}
+      <section className="section">
+        <div className="max-container text-center space-y-8">
+          <h3 className="text-3xl md:text-4xl font-extrabold">
+            Pronto para <span className="text-gradient">acelerar</span> suas comissões?
+          </h3>
+          <p className="mt-2 text-gray-600 max-w-2xl mx-auto">
+            Cadastre-se e comece a publicar produtos prontos com links rastreáveis e
+            legendas otimizadas.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <Link href="/signup" className="btn btn-primary text-base">Criar conta grátis</Link>
+            <Link href="/login" className="btn btn-ghost text-base">Entrar</Link>
+          </div>
+
+          {/* Newsletter novo (card largo, 2 colunas em desktop) */}
+          <div className="mt-12">
+            <Newsletter />
+          </div>
         </div>
       </section>
-    </>
+
+      {/* Como funciona por último (ou move pra cima se preferir) */}
+      <ComoFunciona />
+    </main>
   );
 }
