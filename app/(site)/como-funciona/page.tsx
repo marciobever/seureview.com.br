@@ -49,7 +49,7 @@ type MiniItem = {
   title: string;
   price: number;
   rating: number;
-  image: string; // /public/landing/...  ou /liquidificador.jpg
+  image: string; // /public/landing/...
   url: string;
   commissionPercent?: number;
   salesCount?: number;
@@ -76,7 +76,7 @@ const MOCK_PRODUCTS: MiniItem[] = [
     title: "Liquidificador 1200W Inox — Copo 2L, 12 Velocidades",
     price: 219.9,
     rating: 4.6,
-    image: "/liquidificador.jpg",
+    image: "/landing/liquidificador.jpg",
     url: "#",
     commissionPercent: 12,
     salesCount: 780,
@@ -86,7 +86,7 @@ const MOCK_PRODUCTS: MiniItem[] = [
     title: "Liquidificador PowerGlass 800W — Jarra de Vidro 1.5L",
     price: 189.0,
     rating: 4.4,
-    image: "/liquidificador.jpg",
+    image: "/landing/liquidificador.jpg",
     url: "#",
     commissionPercent: 10,
     salesCount: 630,
@@ -121,6 +121,7 @@ function ProductCard({ product }: { product: MiniItem }) {
           src={product.image}
           alt={product.title}
           fill
+          sizes="(min-width: 640px) 50vw, 100vw"
           className="object-cover"
           priority
         />
@@ -271,11 +272,11 @@ function MockMetrics() {
         </div>
         <div className="rounded-lg border p-4">
           <div className="text-xs text-gray-500">Engajamento</div>
-          <div className="text-2xl font-bold">5,8%</</div>
+          <div className="text-2xl font-bold">5,8%</div>
         </div>
         <div className="rounded-lg border p-4">
           <div className="text-xs text-gray-500">Receita estimada</div>
-          <div className="text-2xl font-bold">R$ 412</</div>
+          <div className="text-2xl font-bold">R$ 412</div>
         </div>
       </div>
     </div>
