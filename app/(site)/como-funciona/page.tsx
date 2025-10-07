@@ -1,61 +1,45 @@
-export const metadata = {
-  title: 'Como funciona — SeuReview',
-  description: 'Veja como publicar produtos com IA, UTM/SubIDs e agendamento.',
+// app/(site)/como-funciona/page.tsx
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Como funciona | SeuReview",
+  description: "Veja o passo a passo: conectar integrações, achar produtos, gerar legendas, programar posts e acompanhar resultados.",
+  alternates: { canonical: "/como-funciona" },
 };
 
-const passos = [
-  {
-    t: '1) Conecte seus marketplaces',
-    d: 'Liga sua conta (Shopee, Amazon, Mercado Livre, AliExpress, Temu) e escolha categorias de interesse.',
-  },
-  {
-    t: '2) Descubra produtos virais',
-    d: 'Use filtros por comissão, preço, desconto e tendência. Salve coleções.',
-  },
-  {
-    t: '3) Gere conteúdo com IA',
-    d: 'Crie legendas otimizadas para Instagram, Facebook e Reels com 1 clique.',
-  },
-  {
-    t: '4) Personalize seus links',
-    d: 'Adicione UTM e SubIDs para rastrear performance por canal/campanha.',
-  },
-  {
-    t: '5) Agende e publique',
-    d: 'Defina horários de pico e publique nas suas redes automaticamente.',
-  },
-  {
-    t: '6) Acompanhe os resultados',
-    d: 'Veja CTR, engajamento e receita estimada num painel único.',
-  },
+const steps = [
+  { t: "1. Conecte suas contas", d: "Integre Meta e marketplaces (ex.: Shopee). Permissões mínimas e seguras." },
+  { t: "2. Descubra produtos virais", d: "Filtros por preço, comissão e tendência. Coleções salvas para sua rotina." },
+  { t: "3. Gere a legenda com IA", d: "Tom de voz e CTA ajustáveis. Hashtags e variações rápidas." },
+  { t: "4. UTM + SubIDs", d: "Rastreie campanhas, canais e criativos para entender o que converte." },
+  { t: "5. Programe e publique", d: "Agende nos horários de pico e publique em múltiplos perfis." },
+  { t: "6. Meça e otimize", d: "Painel com CTR, engajamento e receita estimada para decisões rápidas." },
 ];
 
-export default function ComoFuncionaPage() {
+export default function Page() {
   return (
-    <div className="section">
+    <main className="section">
       <div className="max-container">
-        <h1 className="text-3xl md:text-4xl font-extrabold">Como funciona</h1>
-        <p className="mt-3 text-gray-600 max-w-2xl">
-          Entenda o fluxo do SeuReview do zero ao resultado, com foco em produtividade e conversão.
+        <h1 className="text-3xl md:text-4xl font-bold">Como funciona</h1>
+        <p className="mt-2 text-gray-600 max-w-2xl">
+          Do zero à publicação em poucos minutos — e com rastreio completo das suas campanhas.
         </p>
 
-        <div className="mt-10 grid md:grid-cols-2 gap-6">
-          {passos.map((p) => (
-            <div key={p.t} className="card">
+        <div className="mt-10 grid lg:grid-cols-3 gap-6">
+          {steps.map((s, i) => (
+            <div key={i} className="card">
               <div className="card-body">
-                <h3 className="font-semibold text-lg">{p.t}</h3>
-                <p className="mt-2 text-sm text-gray-600">{p.d}</p>
+                <div className="font-semibold text-lg text-gray-900">{s.t}</div>
+                <p className="mt-2 text-sm text-gray-600">{s.d}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 text-sm text-gray-600">
-          <p>
-            Dúvidas? Fale com a gente em <a className="underline" href="mailto:suporte@seureview.com.br">suporte@seureview.com.br</a>.
-          </p>
+        <div className="mt-12">
+          <a href="/signup" className="btn btn-primary">Começar agora</a>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
