@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-type MiniItem = {
+export type MiniItem = {
   id: string;
   title: string;
   price: number;
@@ -37,7 +37,7 @@ function formatSalesShort(n?: number) {
   return `${v} vendas`;
 }
 
-/** ícones inline (sem libs externas) */
+/** Ícones inline (sem libs externas) */
 function StarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" width="1em" height="1em" aria-hidden="true" {...props}>
@@ -89,8 +89,12 @@ const MOCK_ITEMS: MiniItem[] = [
   },
 ];
 
-export default function HeroPreview() {
-  const items = MOCK_ITEMS;
+export default function HeroPreview({
+  initialItems,
+}: {
+  initialItems?: MiniItem[];
+}) {
+  const items = Array.isArray(initialItems) && initialItems.length > 0 ? initialItems : MOCK_ITEMS;
 
   return (
     <div className="p-4 md:p-5 w-full max-w-[680px]">
