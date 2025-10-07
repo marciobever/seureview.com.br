@@ -1,9 +1,61 @@
 "use client";
 
 import * as React from "react";
-import { Star, Percent, TrendingUp, Search as SearchIcon } from "lucide-react";
 
-// Tipos do mini-card
+/* === Ícones inline (sem dependências) === */
+function IconStar({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <path
+        d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.62L12 2 9.19 8.62 2 9.24l5.46 4.73L5.82 21z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+function IconPercent({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <path
+        d="M7 7.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5Zm10 4a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM6 19l12-14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+function IconTrendingUp({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <path
+        d="M3 17l6-6 4 4 7-7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M14 8h7v7"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+function IconSearch({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="2" fill="none" />
+      <path d="M20 20l-3.5-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* === Tipos e helpers === */
 type MiniItem = {
   id: string;
   title: string;
@@ -21,10 +73,10 @@ function formatPrice(n?: number) {
 }
 function formatPercent(n?: number) {
   const v = Number(n ?? 0);
-  return `${Math.round(v ?? 0)}%`;
+  return `${Math.round(v)}%`;
 }
 
-// Card compacto (usa as mesmas “vibes” do dashboard)
+/* === Card compacto === */
 function MiniCard({ item }: { item: MiniItem }) {
   const hasPercent = typeof item.commissionPercent === "number";
   const hasSales = typeof item.salesCount === "number";
@@ -43,26 +95,26 @@ function MiniCard({ item }: { item: MiniItem }) {
         <div className="mt-3 space-y-2">
           <h3 className="text-[13px] font-semibold text-[#111827] line-clamp-2">{item.title}</h3>
 
-          {/* linha rating + preço */}
+          {/* rating + preço */}
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-1 text-[#6B7280] text-xs">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <IconStar className="w-4 h-4 text-amber-400" />
               <span>{Number(item.rating || 0).toFixed(1)}</span>
             </div>
             <div className="text-sm font-semibold">{formatPrice(item.price)}</div>
           </div>
 
-          {/* chips: comissão e vendas alinhados à direita, logo abaixo do preço */}
+          {/* chips à direita */}
           <div className="flex items-center justify-end gap-2">
             {hasPercent && (
               <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-green-50 text-green-700 border border-green-200">
-                <Percent className="w-3 h-3" />
+                <IconPercent className="w-3 h-3" />
                 {formatPercent(item.commissionPercent)}
               </span>
             )}
             {hasSales && (
               <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-600 border border-gray-200">
-                <TrendingUp className="w-3 h-3" />
+                <IconTrendingUp className="w-3 h-3" />
                 Vendas {item.salesCount?.toLocaleString("pt-BR")}
               </span>
             )}
@@ -73,7 +125,7 @@ function MiniCard({ item }: { item: MiniItem }) {
   );
 }
 
-// Normalizador para a resposta do /api/search/shopee
+/* === Normalizador === */
 function normalizeItems(raw: any[]): MiniItem[] {
   return raw.slice(0, 2).map((it: any, idx: number) => {
     const id =
@@ -111,10 +163,10 @@ function normalizeItems(raw: any[]): MiniItem[] {
   });
 }
 
+/* === Componente principal === */
 export default function HeroPreview({
   initialItems,
 }: {
-  /** Passe dois itens para pré-popular o mock (se ausente, usa dois bonitos “fake”). */
   initialItems?: MiniItem[];
 }) {
   const [query, setQuery] = React.useState("");
@@ -179,13 +231,12 @@ export default function HeroPreview({
 
   return (
     <div className="w-full max-w-xl p-4">
-      {/* header + busca (tudo dentro do “quadradinho”) */}
       <div className="rounded-2xl border border-[#FFD9CF] bg-white/85 backdrop-blur shadow-sm overflow-hidden">
         <div className="p-4 border-b border-[#FFD9CF]">
           <div className="text-sm text-[#6B7280]">Prévia do painel</div>
           <div className="mt-3 flex gap-2">
             <div className="relative flex-1">
-              <SearchIcon className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <IconSearch className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -205,7 +256,6 @@ export default function HeroPreview({
           {err ? <p className="mt-2 text-xs text-[#B42318]">{err}</p> : null}
         </div>
 
-        {/* grid 2 col com os cartões */}
         <div className="p-4 grid grid-cols-2 gap-3">
           {items.map((it) => (
             <MiniCard key={it.id} item={it} />
