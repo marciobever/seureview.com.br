@@ -6,7 +6,7 @@ import * as React from 'react';
 const PRELOAD = [
   {
     id: 'shoe',
-    title: 'Tênis Nike Air Zoom Pegasus — corrida e amortecimento',
+    title: 'Tênis Nike Air Zoom Pegasus corrida e amortecimento',
     price: 449.9,
     rating: 4.8,
     image:
@@ -17,10 +17,10 @@ const PRELOAD = [
   },
   {
     id: 'liquidificador',
-    title: 'Liquidificador Premium 900W — 12 velocidades',
+    title: 'Liquidificador Premium 900W 12 velocidades',
     price: 179.9,
     rating: 4.6,
-    image: '/liquidificador.jpg',
+    image: '/landing/liquidificador.jpg',
     url: '#',
     commissionPercent: 9,
     salesCount: 1200,
