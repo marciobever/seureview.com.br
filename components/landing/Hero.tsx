@@ -3,10 +3,7 @@
 import Link from "next/link";
 import HeroPreview from "./HeroPreview";
 
-// se quiser já abrir com 2 produtos REAIS, preencha aqui os dados básicos.
-// (Se você me mandar 2 links da Shopee + título/imagem/preço, te devolvo esse bloco pronto.)
-const PRELOAD: Parameters<typeof HeroPreview>[0]["initialItems"] = undefined;
-// Exemplo pronto (fake bonito):
+// Preload opcional com 2 itens (cole aqui se quiser abrir já com produtos reais)
 // const PRELOAD = [
 //   {
 //     id: "pre-1",
@@ -29,6 +26,7 @@ const PRELOAD: Parameters<typeof HeroPreview>[0]["initialItems"] = undefined;
 //     salesCount: 2410,
 //   },
 // ];
+const PRELOAD = undefined;
 
 const chips = ["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"];
 
@@ -92,7 +90,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Preview (tudo dentro do quadrado) */}
+          {/* Preview dentro do “quadrado” */}
           <div className="relative flex justify-center md:justify-end">
             <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
               <HeroPreview initialItems={PRELOAD} />
