@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import AuthCTA from "@/components/AuthCTA";
-import SiteHeader from "@/components/SiteHeader";
 
 // ---------- Ícones ----------
 function StarIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -286,7 +285,6 @@ export default function Client() {
 
   return (
     <main className="section">
-      <SiteHeader />
       <div className="max-container">
         <h1 className="text-3xl md:text-4xl font-bold">Como funciona</h1>
         <p className="mt-3 text-gray-600 max-w-2xl">
