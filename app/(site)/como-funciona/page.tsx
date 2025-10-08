@@ -1,4 +1,4 @@
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 
 export const dynamic = "force-static";
 export const metadata = {
@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 // carrega o conteúdo só no cliente (evita SSR loop)
-const Client = dynamic(() => import("./Client"), {
+const Client = nextDynamic(() => import("./Client"), {
   ssr: false,
   loading: () => <div style={{ padding: 24 }}>carregando…</div>,
 });
