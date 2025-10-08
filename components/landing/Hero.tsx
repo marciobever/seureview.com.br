@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import dynamic from "next/dynamic";
-
-const HeroPreview = dynamic(() => import("./HeroPreview"), { ssr: false });
+import { useLoggedIn } from "@/components/hooks/useLoggedIn";
+import HeroPreview from "./HeroPreview";
 
 const chips = ["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"];
 
 export default function Hero() {
+  const logged = useLoggedIn();
+
   return (
     <section className="relative overflow-hidden">
       {/* glow */}
@@ -42,12 +43,25 @@ export default function Hero() {
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/signup" className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm">
-                Começar agora
-              </Link>
-              <Link href="/como-funciona" className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
-                Ver como funciona
-              </Link>
+              {!logged ? (
+                <>
+                  <Link href="/signup" className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm">
+                    Criar conta grátis
+                  </Link>
+                  <Link href="/login" className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+                    Entrar
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/dashboard" className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm">
+                    Ir para o Dashboard
+                  </Link>
+                  <Link href="/como-funciona" className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+                    Ver como funciona
+                  </Link>
+                </>
+              )}
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-2 text-xs">
@@ -62,7 +76,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Prévia */}
+          {/* Prévia dentro do card */}
           <div className="relative flex justify-center md:justify-end">
             <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
               <HeroPreview />
