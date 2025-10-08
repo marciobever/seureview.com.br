@@ -9,7 +9,7 @@ export const metadata = {
   alternates: { canonical: "/como-funciona" },
 };
 
-// carrega o conteúdo só no cliente (evita SSR loop)
+// carrega o conteúdo só no cliente (evita SSR loop e mantém leve)
 const Client = nextDynamic(() => import("./Client"), {
   ssr: false,
   loading: () => <div style={{ padding: 24 }}>carregando…</div>,
