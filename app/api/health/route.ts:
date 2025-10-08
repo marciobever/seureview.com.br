@@ -1,4 +1,6 @@
-// app/api/health/route.ts
-export async function GET() {
-  return new Response("OK", { status: 200 });
+import { NextResponse } from "next/server";
+
+export function GET() {
+  // simples e rápido: sempre 200
+  return NextResponse.json({ ok: true, ts: Date.now() });
 }
