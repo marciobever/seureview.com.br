@@ -1,5 +1,4 @@
 // app/como-funciona/page.tsx
-import Image from "next/image";
 import * as React from "react";
 
 export const metadata = {
@@ -9,47 +8,13 @@ export const metadata = {
   alternates: { canonical: "/como-funciona" },
 };
 
-// ———— ÍCONES INLINE (sem libs) ————
-function StarIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
-      <path d="M12 17.27l6.18 3.73-1.64-7.03L21 9.24l-7.19-.62L12 2 10.19 8.62 3 9.24l4.46 4.73L5.82 21z" />
-    </svg>
-  );
-}
-function PercentIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
-      <path d="M19 5L5 19" strokeWidth="2" />
-      <circle cx="7.5" cy="7.5" r="2.5" strokeWidth="2" />
-      <circle cx="16.5" cy="16.5" r="2.5" strokeWidth="2" />
-    </svg>
-  );
-}
-function TrendingIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
-      <path d="M3 17l6-6 4 4 7-7" strokeWidth="2" />
-      <path d="M14 8h7v7" strokeWidth="2" />
-    </svg>
-  );
-}
-function SearchIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden {...props}>
-      <circle cx="11" cy="11" r="7" strokeWidth="2" />
-      <path d="M20 20l-3.5-3.5" strokeWidth="2" />
-    </svg>
-  );
-}
-
-// ———— HELPERS ————
+// Helpers
 type MiniItem = {
   id: string;
   title: string;
   price: number;
   rating: number;
-  image: string; // /public/landing/...
+  image: string; // em /public/landing/...
   url: string;
   commissionPercent?: number;
   salesCount?: number;
@@ -69,7 +34,7 @@ function compactSales(n?: number) {
   return `${v}`;
 }
 
-// ———— MOCKS ————
+// Mock
 const MOCK_PRODUCTS: MiniItem[] = [
   {
     id: "p1",
@@ -93,7 +58,7 @@ const MOCK_PRODUCTS: MiniItem[] = [
   },
 ];
 
-// ———— SUB-COMPONENTES VISUAIS ————
+// Subcomponentes
 function Badge({
   tone = "default",
   className = "",
@@ -115,15 +80,13 @@ function Badge({
 function ProductCard({ product }: { product: MiniItem }) {
   return (
     <div className="overflow-hidden rounded-xl border border-[#FFD9CF] bg-white shadow-sm">
-      {/* imagem com Next/Image (sem onError; SSR-safe) */}
+      {/* imagem simples para evitar qualquer problema de runtime */}
       <div className="relative aspect-[4/3] bg-[#FFF9F7] border-b border-[#FFD9CF]">
-        <Image
+        <img
           src={product.image}
           alt={product.title}
-          fill
-          sizes="(min-width: 640px) 50vw, 100vw"
-          className="object-cover"
-          priority
+          className="w-full h-full object-cover"
+          loading="eager"
         />
       </div>
 
@@ -134,22 +97,22 @@ function ProductCard({ product }: { product: MiniItem }) {
 
         <div className="flex items-center justify-between">
           <div className="inline-flex items-center gap-1 text-[#6B7280] text-sm">
-            <StarIcon className="w-4 h-4 text-amber-400" />
+            {/* estrela simplificada */}
+            <span aria-hidden>★</span>
             <span>{Number(product.rating || 0).toFixed(1)}</span>
           </div>
           <div className="text-sm font-semibold">{formatPrice(product.price)}</div>
         </div>
 
-        {/* LINHA DE CHIPS: esquerda = comissão (%), direita = vendas */}
         <div className="flex items-center justify-between pt-1">
           <Badge tone="success" className="inline-flex items-center gap-1">
-            <PercentIcon className="w-3 h-3" />
+            <span aria-hidden>%</span>
             {formatPercent(product.commissionPercent ?? 0)}
           </Badge>
 
           {typeof product.salesCount === "number" && (
             <Badge className="inline-flex items-center gap-1">
-              <TrendingIcon className="w-3 h-3" />
+              <span aria-hidden>↗</span>
               {compactSales(product.salesCount)} vendas
             </Badge>
           )}
@@ -164,7 +127,7 @@ function MockSearchPanel() {
     <div className="rounded-2xl border border-[#FFD9CF] bg-white/80 backdrop-blur">
       <div className="p-3 border-b border-[#FFD9CF] bg-[#FFF7F5] flex items-center justify-between">
         <div className="relative w-full max-w-md">
-          <SearchIcon className="w-4 h-4 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+          <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
           <input
             disabled
             placeholder="Ex.: liquidificador"
@@ -173,7 +136,7 @@ function MockSearchPanel() {
         </div>
         <button
           disabled
-          className="ml-3 px-3 py-2 text-sm rounded-md bg-[#EE4D2D]/90 text-white hover:bg-[#D8431F] disabled:opacity-60"
+          className="ml-3 px-3 py-2 text-sm rounded-md bg-[#EE4D2D]/90 text-white disabled:opacity-60"
           title="Demonstração"
         >
           Buscar (demo)
@@ -220,7 +183,7 @@ Link com desconto e entrega rápida 👇`}
               <input className="w-full px-3 py-2 rounded-md border" defaultValue="reels-05" />
             </div>
           </div>
-          <button className="px-3 py-2 rounded-md bg-[#EE4D2D] text-white text-sm hover:bg-[#D8431F]">
+          <button className="px-3 py-2 rounded-md bg-[#EE4D2D] text-white text-sm">
             Gerar variações
           </button>
         </div>
@@ -235,7 +198,9 @@ Link com desconto e entrega rápida 👇`}
               Tritura gelo, frutas e vitaminas em segundos 🧊🍓<br />
               Link com desconto e entrega rápida 👇
             </p>
-            <div className="text-xs text-[#EE4D2D]">seureview.com.br/r/abc123?utm_source=instagram&subid=reels-05</div>
+            <div className="text-xs text-[#EE4D2D]">
+              seureview.com.br/r/abc123?utm_source=instagram&subid=reels-05
+            </div>
             <div className="flex gap-2">
               <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-gray-100 border text-xs">
                 #liquidificador
@@ -246,10 +211,8 @@ Link com desconto e entrega rápida 👇`}
             </div>
           </div>
           <div className="flex gap-2">
-            <button className="px-3 py-2 rounded-md border text-sm hover:bg-gray-50">
-              Agendar
-            </button>
-            <button className="px-3 py-2 rounded-md bg-[#EE4D2D] text-white text-sm hover:bg-[#D8431F]">
+            <button className="px-3 py-2 rounded-md border text-sm">Agendar</button>
+            <button className="px-3 py-2 rounded-md bg-[#EE4D2D] text-white text-sm">
               Publicar agora
             </button>
           </div>
@@ -312,7 +275,6 @@ export default function Page() {
           ))}
         </div>
 
-        {/* Telas de exemplo: Busca / Composer / Métricas */}
         <div className="mt-12 grid gap-8">
           <div>
             <div className="text-sm font-semibold mb-3">1) Buscar produtos</div>
