@@ -85,7 +85,9 @@ export function middleware(req: NextRequest) {
   return NextResponse.redirect(loginUrl);
 }
 
-// Aplica globalmente (exceto estáticos)
+// Aplica globalmente (exceto estáticos e /api/health)
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/health).*)",
+  ],
 };
