@@ -1,6 +1,7 @@
 import nextDynamic from "next/dynamic";
 
 export const dynamic = "force-static";
+
 export const metadata = {
   title: "Como funciona | SeuReview",
   description:
