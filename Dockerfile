@@ -1,26 +1,26 @@
-# ---------- deps ----------
-FROM node:20-alpine AS deps
+# ---- run (single-stage) ----
+FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
 
-# ---------- build ----------
-FROM node:20-alpine AS build
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# deps do sistema p/ healthcheck
+RUN apk add --no-cache curl
+
+# deps do app
+COPY package*.json ./
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+
+# código
 COPY . .
+
+# build Next (usa Tailwind/PostCSS das devDependencies)
 RUN npm run build
 
-# ---------- run ----------
-FROM node:20-alpine AS runner
-WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# copia o bundle standalone + estáticos
-COPY --from=build /app/.next/standalone ./
-COPY --from=build /app/public ./public
-COPY --from=build /app/.next/static ./.next/static
+# healthcheck: verifica se a home responde 200
+HEALTHCHECK --interval=10s --timeout=3s --start-period=10s --retries=3 \
+  CMD curl -fsS http://localhost:3000/ || exit 1
 
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["npm","run","start"]
