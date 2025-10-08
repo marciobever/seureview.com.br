@@ -11,7 +11,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-# ---------- run (standalone) ----------
+# ---------- run ----------
 FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -21,11 +21,6 @@ ENV PORT=3000
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/static ./.next/static
-
-# healthcheck (mais tolerante)
-RUN apk add --no-cache curl
-HEALTHCHECK --interval=10s --timeout=5s --start-period=60s --retries=6 \
-  CMD curl -fsS http://localhost:3000/ || exit 1
 
 EXPOSE 3000
 CMD ["node", "server.js"]
