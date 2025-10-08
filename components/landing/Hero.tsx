@@ -1,74 +1,93 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useLoggedIn } from "@/components/hooks/useLoggedIn";
+import HeroPreview from "./HeroPreview";
 
-type Props = { initialLoggedIn: boolean };
+const chips = ["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"];
 
-// Onde está o app (pode sobrescrever via .env)
-const APP_ORIGIN =
-  process.env.NEXT_PUBLIC_APP_ORIGIN ?? "https://app.seureview.com.br";
-
-export default function Header({ initialLoggedIn }: Props) {
-  // usamos o valor que veio do servidor (cookie HttpOnly do app)
-  const [logged, setLogged] = useState(initialLoggedIn);
-
-  // se um dia quiser “confirmar” no cliente (ex.: fetch `${APP_ORIGIN}/api/me`),
-  // dá pra ligar aqui. Por ora, confiamos no SSR.
-  useEffect(() => setLogged(initialLoggedIn), [initialLoggedIn]);
+export default function Hero() {
+  const logged = useLoggedIn();
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
-      <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">
-            SR
-          </span>
-          <span>SeuReview</span>
-        </Link>
+    <section className="relative overflow-hidden">
+      {/* glow */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        aria-hidden
+        style={{
+          background:
+            "radial-gradient(1200px 600px at 10% -10%, rgba(238,77,45,0.18) 0%, rgba(238,77,45,0) 60%), radial-gradient(900px 500px at 100% 0%, rgba(255,140,105,0.14) 0%, rgba(255,140,105,0) 55%)",
+        }}
+      />
 
-        <nav className="ml-auto hidden md:flex items-center gap-6 text-sm">
-          <Link href="/como-funciona" className="hover:opacity-80">
-            Como funciona
-          </Link>
-          <a href="/#depoimentos" className="hover:opacity-80">
-            Depoimentos
-          </a>
-          <a href="/#newsletter" className="hover:opacity-80">
-            Newsletter
-          </a>
-          <Link href="/precos" className="hover:opacity-80">
-            Preços
-          </Link>
-        </nav>
+      <div className="mx-auto max-w-7xl px-6 py-16 md:py-24">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          {/* Texto */}
+          <div>
+            <p className="inline-flex items-center gap-2 text-xs font-medium text-[#EE4D2D] bg-[#FFF1ED] border border-[#FFD9CF] rounded-full px-2.5 py-1">
+              Novo • Multi-marketplaces
+            </p>
 
-        <div className="ml-auto md:ml-6 flex items-center gap-3">
-          {logged ? (
-            <>
-              <a href={`${APP_ORIGIN}/dashboard`} className="btn btn-primary text-sm">
-                Dashboard
-              </a>
-              {/* se o app aceitar next= para voltar pro site, mantemos */}
-              <a
-                href={`${APP_ORIGIN}/api/auth/logout?next=${encodeURIComponent("https://seureview.com.br")}`}
-                className="btn btn-ghost text-sm"
-              >
-                Sair
-              </a>
-            </>
-          ) : (
-            <>
-              {/* usamos páginas locais “ponte” para o app */}
-              <Link href="/login" className="btn btn-ghost text-sm">
-                Entrar
-              </Link>
-              <Link href="/signup" className="btn btn-primary text-sm">
-                Criar conta
-              </Link>
-            </>
-          )}
+            <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
+              <span className="bg-gradient-to-r from-[#FF8A66] to-[#EE4D2D] bg-clip-text text-transparent">
+                Encontre produtos virais
+              </span>{" "}
+              e publique em minutos.
+            </h1>
+
+            <p className="mt-4 text-lg text-gray-600 max-w-[58ch]">
+              SeuReview conecta você às melhores ofertas da <strong>Shopee</strong>, <strong>Amazon</strong>,
+              <strong> Mercado Livre</strong>, <strong>AliExpress</strong> e <strong>Temu</strong> — com
+              legendas inteligentes e links rastreáveis.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {!logged ? (
+                <>
+                  <Link href="/signup" className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm">
+                    Criar conta grátis
+                  </Link>
+                  <Link href="/login" className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+                    Entrar
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/dashboard" className="px-4 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm">
+                    Ir para o Dashboard
+                  </Link>
+                  <Link href="/como-funciona" className="px-4 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0]">
+                    Ver como funciona
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-center gap-2 text-xs">
+              {chips.map((c) => (
+                <span
+                  key={c}
+                  className="inline-flex items-center rounded-full px-3 py-1 border border-[#FFD9CF] bg-white/80 backdrop-blur hover:bg-white transition"
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Prévia dentro do card */}
+          <div className="relative flex justify-center md:justify-end">
+            <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
+              <HeroPreview />
+            </div>
+            <div
+              className="pointer-events-none absolute -z-10 -right-10 -top-10 h-48 w-48 rounded-full blur-3xl"
+              style={{ background: "rgba(238,77,45,0.22)" }}
+            />
+          </div>
         </div>
       </div>
-    </header>
+    </section>
   );
 }
