@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import HeroPreview from "./HeroPreview";
+import dynamic from "next/dynamic";
+
+const HeroPreview = dynamic(() => import("./HeroPreview"), { ssr: false });
 
 const chips = ["Legenda IA", "UTM + SubIDs", "Agendamento", "Shopee • Amazon • ML"];
 
@@ -60,7 +62,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Prévia dentro do “quadradinho” */}
+          {/* Prévia */}
           <div className="relative flex justify-center md:justify-end">
             <div className="rounded-2xl border border-[#FFD9CF] bg-white/70 backdrop-blur shadow-sm">
               <HeroPreview />
