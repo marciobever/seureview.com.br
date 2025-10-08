@@ -108,7 +108,7 @@ const MOCK_PRODUCTS: MiniItem[] = [
     title: "Liquidificador PowerGlass 800W — Jarra de Vidro 1.5L",
     price: 189.0,
     rating: 4.4,
-    image: "/landing/liquidificador.jpg",
+    image: "/landing/liquidificador2.jpg",
     url: "#",
     commissionPercent: 10,
     salesCount: 630,
