@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 
 const SESSION_COOKIE = "app_session";
 
-// APIs públicas (não exigem login)
 const PUBLIC_API = [
   "/api/auth/login",
   "/api/auth/signup",
@@ -15,14 +14,13 @@ const PUBLIC_API = [
   "/api/dev/env-check",
 ];
 
-// Páginas públicas (visíveis sem login)
 const PUBLIC_PAGES = ["/", "/login", "/signup", "/privacy", "/terms"];
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const { pathname, searchParams } = url;
 
-  // 0) Assets e arquivos estáticos liberados
+  // estáticos
   if (
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
@@ -32,15 +30,14 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 1) Endpoints de saúde liberados e rápidos (não tocar no "/")
+  // saúde (não interceptar lógica nenhuma)
   if (pathname === "/api/health" || pathname === "/health") {
-    // deixe passar pro route handler (outra opção: responder aqui com 200)
     return NextResponse.next();
   }
 
   const hasSession = Boolean(req.cookies.get(SESSION_COOKIE)?.value);
 
-  // 2) Se usuário já estiver logado e acessar /login ou /signup → redireciona
+  // login/signup → redireciona se já logado
   if ((pathname === "/login" || pathname === "/signup") && hasSession) {
     const nextParam = searchParams.get("next");
     const redirectUrl = url.clone();
@@ -49,24 +46,17 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // 3) APIs públicas liberadas
-  if (PUBLIC_API.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
-  }
+  // APIs e páginas públicas
+  if (PUBLIC_API.some((p) => pathname.startsWith(p))) return NextResponse.next();
+  if (PUBLIC_PAGES.includes(pathname)) return NextResponse.next();
 
-  // 4) Páginas públicas liberadas
-  if (PUBLIC_PAGES.includes(pathname)) {
-    return NextResponse.next();
-  }
-
-  // 5) Regras de auth
+  // protege dashboard & /api/*
   const needsAuth =
     pathname.startsWith("/dashboard") ||
     pathname.startsWith("/api/") ||
     pathname === "/dashboard";
 
   if (!needsAuth) return NextResponse.next();
-
   if (hasSession) return NextResponse.next();
 
   if (pathname.startsWith("/api/")) {
@@ -80,9 +70,9 @@ export function middleware(req: NextRequest) {
   return NextResponse.redirect(loginUrl);
 }
 
-// Aplica globalmente (exceto estáticos e robots/sitemap)
+// NÃO rodar middleware em /api/health nem /health
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/health|health).*)",
   ],
 };
