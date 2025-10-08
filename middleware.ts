@@ -16,16 +16,24 @@ const PUBLIC_API = [
 ];
 
 // Páginas públicas (visíveis sem login)
-const PUBLIC_PAGES = [
-  "/", // landing principal
-  "/login",
-  "/signup",
-  "/privacy",
-  "/terms",
-];
+const PUBLIC_PAGES = ["/", "/login", "/signup", "/privacy", "/terms"];
 
 export function middleware(req: NextRequest) {
-  const { pathname, searchParams } = req.nextUrl;
+  const url = req.nextUrl;
+  const pathname = url.pathname;
+  const searchParams = url.searchParams;
+  const ua = req.headers.get("user-agent") || "";
+
+  // 0) Short-circuit de healthcheck: responde OK para curl/wget/coolify em "/" ou "/health"
+  if (
+    (pathname === "/" || pathname === "/health") &&
+    /(curl|wget|healthcheck|coolify)/i.test(ua)
+  ) {
+    return new NextResponse("OK", {
+      status: 200,
+      headers: { "content-type": "text/plain" },
+    });
+  }
 
   // liberar assets estáticos e arquivos públicos
   if (
@@ -37,15 +45,23 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  // rota de saúde acessível por qualquer agente (útil para testar no browser também)
+  if (pathname === "/api/health" || pathname === "/health") {
+    return new NextResponse("OK", {
+      status: 200,
+      headers: { "content-type": "text/plain" },
+    });
+  }
+
   const hasSession = Boolean(req.cookies.get(SESSION_COOKIE)?.value);
 
-  // 1) Se usuário já estiver logado e acessar /login ou /signup → redireciona pro dashboard
+  // 1) Se usuário já estiver logado e acessar /login ou /signup → redireciona
   if ((pathname === "/login" || pathname === "/signup") && hasSession) {
     const nextParam = searchParams.get("next");
-    const url = req.nextUrl.clone();
-    url.pathname = nextParam || "/dashboard/shopee";
-    url.search = "";
-    return NextResponse.redirect(url);
+    const redirectUrl = url.clone();
+    redirectUrl.pathname = nextParam || "/dashboard/shopee";
+    redirectUrl.search = "";
+    return NextResponse.redirect(redirectUrl);
   }
 
   // 2) APIs públicas liberadas
@@ -64,10 +80,7 @@ export function middleware(req: NextRequest) {
     pathname.startsWith("/api/") ||
     pathname === "/dashboard";
 
-  if (!needsAuth) {
-    // qualquer outra rota que não se encaixe acima segue pública
-    return NextResponse.next();
-  }
+  if (!needsAuth) return NextResponse.next();
 
   // 5) Se o usuário tem sessão → ok
   if (hasSession) return NextResponse.next();
@@ -78,16 +91,17 @@ export function middleware(req: NextRequest) {
   }
 
   // 7) Páginas protegidas sem sessão → redireciona p/ login
-  const loginUrl = req.nextUrl.clone();
+  const loginUrl = url.clone();
   loginUrl.pathname = "/login";
   loginUrl.search = "";
   loginUrl.searchParams.set("next", pathname);
   return NextResponse.redirect(loginUrl);
 }
 
-// Aplica globalmente (exceto estáticos e /api/health)
+// Aplica globalmente (exceto estáticos)
+// (não excluo /api/health aqui porque já tratamos acima)
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|api/health).*)",
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml).*)",
   ],
 };
