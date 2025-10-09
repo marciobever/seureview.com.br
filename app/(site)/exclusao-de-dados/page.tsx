@@ -1,5 +1,4 @@
 // app/(site)/exclusao-de-dados/page.tsx
-import { SectionHeader } from "@/components/ui";
 
 export const metadata = {
   title: "Exclusão de dados do usuário | SeuReview",
@@ -9,8 +8,7 @@ export const metadata = {
 };
 
 function LastUpdated() {
-  const dt = new Date();
-  const stamp = dt.toLocaleDateString("pt-BR");
+  const stamp = new Date().toLocaleDateString("pt-BR");
   return (
     <span className="inline-flex items-center rounded-full bg-zinc-100 text-zinc-700 text-xs px-2 py-1 ring-1 ring-zinc-200">
       Última atualização: {stamp}
@@ -22,18 +20,28 @@ export default function Page() {
   return (
     <main className="section">
       <div className="max-container max-w-4xl mx-auto">
-        <SectionHeader
-          emoji="🗑️"
-          title="Exclusão de dados do usuário"
-          subtitle="Entenda como pedir a exclusão dos seus dados pessoais e o que acontece com sua conta."
-        />
-
-        <div className="mt-2">
-          <LastUpdated />
-        </div>
+        {/* Header simples no padrão do site */}
+        <header className="text-center">
+          <div
+            aria-hidden
+            className="mx-auto h-8 w-8 rounded-full bg-orange-100 text-orange-700 flex items-center justify-center text-lg"
+          >
+            🗑️
+          </div>
+          <h1 className="mt-3 text-3xl md:text-4xl font-bold">
+            Exclusão de dados do usuário
+          </h1>
+          <p className="mt-2 text-zinc-600">
+            Entenda como pedir a exclusão dos seus dados pessoais e o que
+            acontece com sua conta.
+          </p>
+          <div className="mt-3">
+            <LastUpdated />
+          </div>
+        </header>
 
         {/* Intro */}
-        <div className="mt-6 card">
+        <div className="mt-8 card">
           <div className="card-body prose">
             <p>
               Você pode solicitar a exclusão dos seus dados pessoais a qualquer
@@ -58,8 +66,8 @@ export default function Page() {
                   com o assunto <em>“Exclusão de dados”</em>.
                 </li>
                 <li>
-                  Informe o <strong>e-mail cadastrado</strong> e, se possível,
-                  o <strong>ID da conta</strong>.
+                  Informe o <strong>e-mail cadastrado</strong> e, se possível, o{" "}
+                  <strong>ID da conta</strong>.
                 </li>
                 <li>
                   Podemos solicitar <strong>verificação de identidade</strong>{" "}
