@@ -70,8 +70,7 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
     "px-3 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0] text-[#111827]";
   // BADGE MENOR (pill)
   const badge =
-    "hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#FFD9CF] bg-[#FFF4F0] " +
-    "px-2 py-[6px] text-[12px] leading-none text-[#7A2E1B]"; // menor que antes
+    "hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#FFD9CF] bg-[#FFF4F0] px-2 py-[6px] text-[12px] leading-none text-[#7A2E1B]";
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-[#FFD9CF]">
@@ -104,6 +103,16 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
                   Olá, {firstName}
                 </a>
               )}
+
+              {/* NOVO: Perfil no app */}
+              <a
+                href={`${APP_URL}/dashboard/perfil`}
+                className={btnGhost}
+                rel="noopener noreferrer"
+              >
+                Perfil
+              </a>
+
               <a href={`${APP_URL}/dashboard`} className={btnPrimary} rel="noopener noreferrer">
                 Dashboard
               </a>
