@@ -4,10 +4,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-type HeaderProps = {
-  /** Vem do layout via cookie HttpOnly do app; opcional pra não travar o build. */
-  initialLoggedIn?: boolean;
-};
+type HeaderProps = { initialLoggedIn?: boolean };
 
 type Me =
   | {
@@ -17,20 +14,17 @@ type Me =
     }
   | { ok: false; error?: string };
 
-// Use a mesma env que você já tem no Coolify
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.seureview.com.br";
 
 export default function Header({ initialLoggedIn = false }: HeaderProps) {
-  const [logged, setLogged] = useState<boolean>(initialLoggedIn);
+  const [logged, setLogged] = useState(initialLoggedIn);
   const [me, setMe] = useState<Me | null>(null);
 
-  // Origem do SITE (para ?next=)
   const siteOrigin = useMemo(() => {
     if (typeof window !== "undefined") return window.location.origin;
     return "https://seureview.com.br";
   }, []);
 
-  // Busca /api/auth/me no APP para exibir o nome
   useEffect(() => {
     let alive = true;
     const ctrl = new AbortController();
@@ -77,9 +71,7 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
     <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-[#FFD9CF]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">
-            SR
-          </span>
+          <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">SR</span>
           <span>SeuReview</span>
         </Link>
 
@@ -117,18 +109,15 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
             </>
           ) : (
             <>
-              {/* Para evitar 404, envia para a RAIZ do APP.
-                 Se não estiver logado, o APP pode redirecionar para a tela de login.
-                 Mantemos ?next= para voltar ao site depois. */}
               <a
-                href={`${APP_URL}/?next=${encodeURIComponent(siteOrigin)}#login`}
+                href={`${APP_URL}/login?next=${encodeURIComponent(siteOrigin)}`}
                 className={btnGhost}
                 rel="noopener noreferrer"
               >
                 Entrar
               </a>
               <a
-                href={`${APP_URL}/?next=${encodeURIComponent(siteOrigin)}#signup`}
+                href={`${APP_URL}/signup?next=${encodeURIComponent(siteOrigin)}`}
                 className={btnPrimary}
                 rel="noopener noreferrer"
               >
