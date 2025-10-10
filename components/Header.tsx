@@ -92,7 +92,7 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
                   title="Ir para o app"
                   rel="noopener noreferrer"
                 >
-                  <span className="h-6 w-6 rounded-full bg-zinc-200 inline-block" />
+                  <span className="h-6 w-6 <span className="h-7 w-7 sm:h-8 sm:w-8 inline-block rounded-full bg-[#FFE3DB] ring-1 ring-[#FFD0C2]" />-full bg-zinc-200 inline-block" />
                   Olá, {firstName}
                 </a>
               )}
