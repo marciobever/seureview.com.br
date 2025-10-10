@@ -1,16 +1,21 @@
+// components/Header.tsx
 "use client";
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 type HeaderProps = {
-  /** Vem do layout (cookie server-side). Opcional pra não travar o build. */
+  /** Vem do layout via cookie HttpOnly do app; opcional pra não travar o build. */
   initialLoggedIn?: boolean;
 };
 
 type Me =
-  | { ok: true; id: string; name: string; email?: string; avatar_url?: string | null }
-  | { ok: false };
+  | {
+      ok: true;
+      session: { userId: string; orgId: string };
+      profile: { id: string; email: string; name?: string | null; is_active?: boolean };
+    }
+  | { ok: false; error?: string };
 
 const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN ?? "https://app.seureview.com.br";
 
@@ -18,21 +23,20 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
   const [logged, setLogged] = useState<boolean>(initialLoggedIn);
   const [me, setMe] = useState<Me | null>(null);
 
-  // Origem do site pra usar no parâmetro `next` (ex.: voltar pro site após login/logout)
+  // Origem do site pra usar no `next` (voltar após login/logout)
   const siteOrigin = useMemo(() => {
     if (typeof window !== "undefined") return window.location.origin;
-    // fallback em SSR
     return "https://seureview.com.br";
   }, []);
 
-  // Carrega /api/me do APP (subdomínio) pra tentar mostrar o nome
+  // Carrega /api/auth/me no APP pra tentar mostrar o nome
   useEffect(() => {
     let alive = true;
     const ctrl = new AbortController();
 
     async function loadMe() {
       try {
-        const res = await fetch(`${APP_ORIGIN}/api/me`, {
+        const res = await fetch(`${APP_ORIGIN}/api/auth/me`, {
           method: "GET",
           credentials: "include",
           cache: "no-store",
@@ -51,7 +55,7 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
       }
     }
 
-    // sempre tenta: o cookie pode estar só no subdomínio
+    // sempre tenta: o cookie pode estar só no subdomínio do APP
     loadMe();
 
     return () => {
@@ -61,8 +65,8 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
   }, []);
 
   const firstName =
-    me && (me as any).ok && typeof (me as any).name === "string"
-      ? (me as any).name.split(" ")?.[0] ?? null
+    me && (me as any).ok && typeof (me as any).profile?.name === "string"
+      ? (me as any).profile.name.split(" ")?.[0] ?? null
       : null;
 
   const btnPrimary =
@@ -112,15 +116,15 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
             </>
           ) : (
             <>
-              {/* leva direto pro app (onde está o fluxo de auth), com retorno pro site */}
+              {/* Direto pro app (onde está o fluxo de auth), com retorno pro site */}
               <a
-                href={`${APP_ORIGIN}/login?next=${encodeURIComponent(siteOrigin)}`}
+                href={`${APP_ORIGIN}/auth/login?next=${encodeURIComponent(siteOrigin)}`}
                 className={btnGhost}
               >
                 Entrar
               </a>
               <a
-                href={`${APP_ORIGIN}/signup?next=${encodeURIComponent(siteOrigin)}`}
+                href={`${APP_ORIGIN}/auth/signup?next=${encodeURIComponent(siteOrigin)}`}
                 className={btnPrimary}
               >
                 Criar conta
