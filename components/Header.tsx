@@ -20,16 +20,18 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
   const [logged, setLogged] = useState(initialLoggedIn);
   const [me, setMe] = useState<Me | null>(null);
 
+  // origem pra usar no ?next=
   const siteOrigin = useMemo(() => {
     if (typeof window !== "undefined") return window.location.origin;
     return "https://seureview.com.br";
   }, []);
 
+  // tenta descobrir sessão no APP (cookie HttpOnly do subdomínio)
   useEffect(() => {
     let alive = true;
     const ctrl = new AbortController();
 
-    async function loadMe() {
+    (async () => {
       try {
         const res = await fetch(`${APP_URL}/api/auth/me`, {
           method: "GET",
@@ -48,9 +50,8 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
         setMe({ ok: false });
         setLogged(false);
       }
-    }
+    })();
 
-    loadMe();
     return () => {
       alive = false;
       ctrl.abort();
@@ -62,16 +63,23 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
       ? (me as any).profile.name.split(" ")?.[0] ?? null
       : null;
 
+  // estilos
   const btnPrimary =
     "px-3 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm";
   const btnGhost =
     "px-3 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0] text-[#111827]";
+  // BADGE MENOR (pill)
+  const badge =
+    "hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#FFD9CF] bg-[#FFF4F0] " +
+    "px-2 py-[6px] text-[12px] leading-none text-[#7A2E1B]"; // menor que antes
 
   return (
     <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-[#FFD9CF]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
-          <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">SR</span>
+          <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">
+            SR
+          </span>
           <span>SeuReview</span>
         </Link>
 
@@ -88,11 +96,11 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
               {firstName && (
                 <a
                   href={APP_URL}
-                  className="hidden sm:inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-3 py-1.5 text-sm hover:bg-white"
+                  className={badge}
                   title="Ir para o app"
                   rel="noopener noreferrer"
                 >
-                  <span className="h-6 w-6 <span className="h-7 w-7 sm:h-8 sm:w-8 inline-block rounded-full bg-[#FFE3DB] ring-1 ring-[#FFD0C2]" />-full bg-zinc-200 inline-block" />
+                  <span className="inline-block h-4 w-4 rounded-full bg-[#FEC6B8] shrink-0" />
                   Olá, {firstName}
                 </a>
               )}
