@@ -17,26 +17,27 @@ type Me =
     }
   | { ok: false; error?: string };
 
-const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN ?? "https://app.seureview.com.br";
+// Use a mesma env que você já tem no Coolify
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://app.seureview.com.br";
 
 export default function Header({ initialLoggedIn = false }: HeaderProps) {
   const [logged, setLogged] = useState<boolean>(initialLoggedIn);
   const [me, setMe] = useState<Me | null>(null);
 
-  // Origem do site pra usar no `next` (voltar após login/logout)
+  // Origem do SITE (para ?next=)
   const siteOrigin = useMemo(() => {
     if (typeof window !== "undefined") return window.location.origin;
     return "https://seureview.com.br";
   }, []);
 
-  // Carrega /api/auth/me no APP pra tentar mostrar o nome
+  // Busca /api/auth/me no APP para exibir o nome
   useEffect(() => {
     let alive = true;
     const ctrl = new AbortController();
 
     async function loadMe() {
       try {
-        const res = await fetch(`${APP_ORIGIN}/api/auth/me`, {
+        const res = await fetch(`${APP_URL}/api/auth/me`, {
           method: "GET",
           credentials: "include",
           cache: "no-store",
@@ -55,9 +56,7 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
       }
     }
 
-    // sempre tenta: o cookie pode estar só no subdomínio do APP
     loadMe();
-
     return () => {
       alive = false;
       ctrl.abort();
@@ -96,36 +95,42 @@ export default function Header({ initialLoggedIn = false }: HeaderProps) {
             <>
               {firstName && (
                 <a
-                  href={APP_ORIGIN}
+                  href={APP_URL}
                   className="hidden sm:inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-3 py-1.5 text-sm hover:bg-white"
                   title="Ir para o app"
+                  rel="noopener noreferrer"
                 >
                   <span className="h-6 w-6 rounded-full bg-zinc-200 inline-block" />
                   Olá, {firstName}
                 </a>
               )}
-              <a href={`${APP_ORIGIN}/dashboard`} className={btnPrimary}>
+              <a href={`${APP_URL}/dashboard`} className={btnPrimary} rel="noopener noreferrer">
                 Dashboard
               </a>
               <a
-                href={`${APP_ORIGIN}/api/auth/logout?next=${encodeURIComponent(siteOrigin)}`}
+                href={`${APP_URL}/api/auth/logout?next=${encodeURIComponent(siteOrigin)}`}
                 className={btnGhost}
+                rel="noopener noreferrer"
               >
                 Sair
               </a>
             </>
           ) : (
             <>
-              {/* Direto pro app (onde está o fluxo de auth), com retorno pro site */}
+              {/* Para evitar 404, envia para a RAIZ do APP.
+                 Se não estiver logado, o APP pode redirecionar para a tela de login.
+                 Mantemos ?next= para voltar ao site depois. */}
               <a
-                href={`${APP_ORIGIN}/auth/login?next=${encodeURIComponent(siteOrigin)}`}
+                href={`${APP_URL}/?next=${encodeURIComponent(siteOrigin)}#login`}
                 className={btnGhost}
+                rel="noopener noreferrer"
               >
                 Entrar
               </a>
               <a
-                href={`${APP_ORIGIN}/auth/signup?next=${encodeURIComponent(siteOrigin)}`}
+                href={`${APP_URL}/?next=${encodeURIComponent(siteOrigin)}#signup`}
                 className={btnPrimary}
+                rel="noopener noreferrer"
               >
                 Criar conta
               </a>
