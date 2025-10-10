@@ -1,8 +1,12 @@
-// components/header.tsx
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+type HeaderProps = {
+  /** Vem do layout (cookie server-side). Opcional pra não travar o build. */
+  initialLoggedIn?: boolean;
+};
 
 type Me =
   | { ok: true; id: string; name: string; email?: string; avatar_url?: string | null }
@@ -10,52 +14,65 @@ type Me =
 
 const APP_ORIGIN = process.env.NEXT_PUBLIC_APP_ORIGIN ?? "https://app.seureview.com.br";
 
-export default function Header() {
+export default function Header({ initialLoggedIn = false }: HeaderProps) {
+  const [logged, setLogged] = useState<boolean>(initialLoggedIn);
   const [me, setMe] = useState<Me | null>(null);
-  const [origin, setOrigin] = useState<string>("https://seureview.com.br"); // fallback seguro
 
+  // Origem do site pra usar no parâmetro `next` (ex.: voltar pro site após login/logout)
+  const siteOrigin = useMemo(() => {
+    if (typeof window !== "undefined") return window.location.origin;
+    // fallback em SSR
+    return "https://seureview.com.br";
+  }, []);
+
+  // Carrega /api/me do APP (subdomínio) pra tentar mostrar o nome
   useEffect(() => {
     let alive = true;
-    if (typeof window !== "undefined") setOrigin(window.location.origin);
+    const ctrl = new AbortController();
 
-    (async () => {
+    async function loadMe() {
       try {
         const res = await fetch(`${APP_ORIGIN}/api/me`, {
+          method: "GET",
           credentials: "include",
-          headers: { Accept: "application/json" },
           cache: "no-store",
+          headers: { Accept: "application/json" },
+          signal: ctrl.signal,
+          mode: "cors",
         });
         const j = (await res.json()) as Me;
         if (!alive) return;
-        setMe(j?.ok ? j : { ok: false });
+        setMe(j);
+        setLogged(!!(j as any)?.ok);
       } catch {
         if (!alive) return;
         setMe({ ok: false });
+        setLogged(false);
       }
-    })();
+    }
+
+    // sempre tenta: o cookie pode estar só no subdomínio
+    loadMe();
 
     return () => {
       alive = false;
+      ctrl.abort();
     };
   }, []);
 
-  const logged = me?.ok === true;
-  const firstName = logged ? (me as Extract<Me, { ok: true }>).name?.split(" ")?.[0] ?? "" : "";
-
-  const loginUrl = `${APP_ORIGIN}/login?next=${encodeURIComponent(origin)}`;
-  const signupUrl = `${APP_ORIGIN}/signup?next=${encodeURIComponent(origin)}`;
-  const dashboardUrl = `${APP_ORIGIN}/dashboard`;
-  const logoutUrl = `${APP_ORIGIN}/api/auth/logout?next=${encodeURIComponent(origin)}`;
+  const firstName =
+    me && (me as any).ok && typeof (me as any).name === "string"
+      ? (me as any).name.split(" ")?.[0] ?? null
+      : null;
 
   const btnPrimary =
-    "px-3 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm transition";
+    "px-3 py-2 rounded-lg text-sm bg-[#EE4D2D] hover:bg-[#D8431F] text-white shadow-sm";
   const btnGhost =
-    "px-3 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0] text-[#111827] transition";
+    "px-3 py-2 rounded-lg text-sm border border-[#FFD9CF] hover:bg-[#FFF4F0] text-[#111827]";
 
   return (
-    <header className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-[#FFD9CF]">
+    <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-[#FFD9CF]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <span className="inline-grid h-8 w-8 place-items-center rounded-lg bg-[#EE4D2D] text-white font-bold">
             SR
@@ -63,7 +80,6 @@ export default function Header() {
           <span>SeuReview</span>
         </Link>
 
-        {/* Nav */}
         <nav className="ml-auto hidden md:flex items-center gap-6 text-sm">
           <Link href="/como-funciona" className="hover:opacity-80">Como funciona</Link>
           <a href="/#depoimentos" className="hover:opacity-80">Depoimentos</a>
@@ -71,19 +87,12 @@ export default function Header() {
           <Link href="/precos" className="hover:opacity-80">Preços</Link>
         </nav>
 
-        {/* Ações */}
         <div className="ml-auto md:ml-6 flex items-center gap-2">
-          {!logged ? (
+          {logged ? (
             <>
-              <a href={loginUrl} className={btnGhost}>Entrar</a>
-              <a href={signupUrl} className={btnPrimary}>Criar conta</a>
-            </>
-          ) : (
-            <>
-              {/* Saudação (desktop) */}
               {firstName && (
                 <a
-                  href={dashboardUrl}
+                  href={APP_ORIGIN}
                   className="hidden sm:inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/70 px-3 py-1.5 text-sm hover:bg-white"
                   title="Ir para o app"
                 >
@@ -91,9 +100,31 @@ export default function Header() {
                   Olá, {firstName}
                 </a>
               )}
-              <a href={dashboardUrl} className={btnPrimary}>Dashboard</a>
-              {/* logout via navegação — garante limpeza do cookie no app */}
-              <a href={logoutUrl} className={btnGhost} title="Sair da conta">Sair</a>
+              <a href={`${APP_ORIGIN}/dashboard`} className={btnPrimary}>
+                Dashboard
+              </a>
+              <a
+                href={`${APP_ORIGIN}/api/auth/logout?next=${encodeURIComponent(siteOrigin)}`}
+                className={btnGhost}
+              >
+                Sair
+              </a>
+            </>
+          ) : (
+            <>
+              {/* leva direto pro app (onde está o fluxo de auth), com retorno pro site */}
+              <a
+                href={`${APP_ORIGIN}/login?next=${encodeURIComponent(siteOrigin)}`}
+                className={btnGhost}
+              >
+                Entrar
+              </a>
+              <a
+                href={`${APP_ORIGIN}/signup?next=${encodeURIComponent(siteOrigin)}`}
+                className={btnPrimary}
+              >
+                Criar conta
+              </a>
             </>
           )}
         </div>
