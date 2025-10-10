@@ -26,7 +26,7 @@ export default function Hero() {
           {/* Texto */}
           <div>
             <p className="inline-flex items-center gap-2 text-xs font-medium text-[#EE4D2D] bg-[#FFF1ED] border border-[#FFD9CF] rounded-full px-2.5 py-1">
-              Novo • Multi-marketplaces
+              Teste grátis · 5 dias
             </p>
 
             <h1 className="mt-4 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1]">
